@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Cronista Prehistórico — Taller de Periódico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --news: #FBF1DE;
+    --news-dark:#ecdfc0;
+    --ink:#1c1a17;
+    --ink-soft:#413c34;
+    --red:#a3282c;
+    --red-dark: #7e1f22;
+    --teal:#2f6a5e;
+    --gold:#b98b2e;
+    --rule:#1c1a17;
+    --shadow: 0 8px 22px rgba(0,0,0,.22);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(255,255,255,.05), transparent 45%),
+      linear-gradient(155deg, #10312c, #1a4740 55%, #0d2925);
+    font-family:'Lora', serif;
+    color: var(--ink);
+    min-height:100vh;
+    padding: 18px;
+  }
+  .app{ max-width: 1150px; margin:0 auto; }
+
+  /* ===== MASTHEAD ===== */
+  header.masthead{
+    background: var(--news);
+    border: 3px double var(--ink);
+    padding: 16px 24px 10px;
+    box-shadow: var(--shadow);
+    position:relative;
+  }
+  .masthead-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:'Lora'; font-size:.68rem; letter-spacing:1.5px; text-transform:uppercase;
+    color: var(--ink-soft); border-bottom:1px solid var(--ink); padding-bottom:6px; margin-bottom:6px;
+  }
+  h1.masthead-title{
+    font-family:'Playfair Display', serif;
+    font-weight:900;
+    font-size: 3rem;
+    text-align:center;
+    margin: 4px 0 2px;
+    color: var(--red);
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 rgba(0,0,0,.08);
+  }
+  .masthead-sub{
+    text-align:center; font-family:'Caveat', cursive; font-size:1.15rem; color: var(--ink-soft); margin: -2px 0 8px;
+  }
+  .masthead-rules{
+    display:flex; justify-content:space-between; font-family:'Lora'; font-size:.7rem;
+    border-top: 3px solid var(--ink); border-bottom:1px solid var(--ink);
+    padding: 4px 0; letter-spacing:.5px; color: var(--ink-soft);
+  }
+
+  /* ===== TABS ===== */
+  nav.tabs{ display:flex; gap:6px; margin:16px 0 0; overflow-x:auto; }
+  .tab{
+    flex:1; min-width:150px;
+    background: var(--news-dark);
+    border: 2px solid var(--ink); border-bottom:none;
+    padding:10px 12px; text-align:center; cursor:pointer;
+    font-family:'Lora'; font-size:.75rem; letter-spacing:.4px;
+    position:relative; top:3px; color: var(--ink-soft);
+    transition:.2s;
+  }
+  .tab .eyebrow{ display:block; font-family:'Playfair Display'; font-weight:700; font-size:1.05rem; color:var(--teal); }
+  .tab.active{ background: var(--news); top:0; box-shadow:0 -4px 10px rgba(0,0,0,.12); color:var(--red); }
+  .tab.done::after{ content:"✓"; position:absolute; top:4px; right:8px; color:#2e7d32; font-weight:bold; }
+
+  main.sheet{
+    background: var(--news);
+    border: 3px solid var(--ink);
+    padding: 26px;
+    box-shadow: var(--shadow);
+    min-height: 420px;
+  }
+  section.phase{ display:none; animation: fadeIn .35s ease; }
+  section.phase.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  h2.phase-title{
+    font-family:'Playfair Display', serif; font-weight:900;
+    color: var(--red); font-size:1.7rem; margin-top:0;
+    border-bottom: 3px double var(--ink); padding-bottom:8px;
+  }
+  .lead{ line-height:1.6; font-size:.98rem; }
+
+  .btn{
+    font-family:'Lora'; font-weight:600;
+    background: var(--teal); color:#fff; border:none;
+    padding:10px 18px; border-radius:3px; cursor:pointer; font-size:.85rem;
+    box-shadow: 0 3px 0 rgba(0,0,0,.25); letter-spacing:.3px;
+    transition: transform .12s ease;
+  }
+  .btn:active{ transform: translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.25); }
+  .btn.red{ background: var(--red); }
+  .btn.gold{ background: var(--gold); }
+  .btn.small{ padding:6px 10px; font-size:.72rem; }
+  .btn.grey{ background:#6b675e; }
+
+  /* ===== FASE 1 ===== */
+  .article-columns{ columns: 2; column-gap: 26px; }
+  .article-wire{
+    background:#fffdf5; border:1px solid #cbb98e; padding:18px 20px;
+    box-shadow: inset 0 0 18px rgba(0,0,0,.03); margin-bottom:20px;
+  }
+  .article-wire p:first-of-type::first-letter{
+    font-family:'Playfair Display'; font-size: 3rem; float:left; line-height:.8;
+    padding-right:8px; color: var(--red); font-weight:900;
+  }
+  .article-wire p{ margin:0 0 12px; }
+
+  .corkboard{
+    background: repeating-linear-gradient(135deg, #caa15e, #caa15e 4px, #bd9451 4px, #bd9451 8px);
+    border: 3px solid var(--ink);
+    border-radius: 6px;
+    padding: 18px;
+    min-height: 220px;
+    display:flex; flex-wrap:wrap; gap:14px; align-content:flex-start;
+  }
+  .sticky{
+    width: 150px; min-height:100px;
+    background:#fff6a8; box-shadow: var(--shadow);
+    padding:10px; font-family:'Caveat', cursive; font-size:1.15rem;
+    position:relative;
+    transform: rotate(var(--r,-3deg));
+    color:#3a3216;
+  }
+  .sticky:nth-child(3n){ background:#a8e6cf; --r:2deg; }
+  .sticky:nth-child(3n+1){ background:#ffd3b0; --r:-4deg; }
+  .sticky button{
+    position:absolute; top:2px; right:4px; background:none; border:none;
+    cursor:pointer; color:#7a1f1a; font-weight:bold; font-family:sans-serif;
+  }
+  .idea-input-row{ display:flex; gap:8px; margin: 14px 0; }
+  .idea-input-row input{
+    flex:1; font-family:'Lora'; padding:10px; border:1px solid #bbb; border-radius:4px; font-size:.9rem;
+  }
+  .qa-hint{
+    display:flex; gap:10px; flex-wrap:wrap; margin: 14px 0;
+  }
+  .qa-hint span{
+    font-family:'Lora'; font-size:.75rem; background: var(--news-dark); border:1px solid var(--ink);
+    padding:4px 10px; border-radius:14px;
+  }
+
+  /* ===== FASE 2: editor + preview ===== */
+  .editor-layout{ display:flex; gap:22px; flex-wrap:wrap; align-items:flex-start; }
+  .editor-panel{ flex:1 1 360px; }
+  .field{ margin-bottom:14px; }
+  .field label{
+    display:block; font-family:'Lora'; font-weight:600; font-size:.78rem;
+    text-transform:uppercase; letter-spacing:.4px; color: var(--ink-soft); margin-bottom:4px;
+  }
+  .field small{ display:block; font-family:'Caveat'; font-size:1rem; color: var(--teal); margin-bottom:4px; }
+  .field input, .field textarea{
+    width:100%; font-family:'Lora'; font-size:.9rem; padding:9px 10px;
+    border:1px solid #bbb; border-radius:4px; resize:vertical;
+  }
+  .two-col{ display:flex; gap:10px; }
+  .two-col .field{ flex:1; }
+
+  .preview-panel{ flex:1 1 380px; position:sticky; top:10px; }
+  .newspaper-preview{
+    background:#fffdf5; border:3px double var(--ink); padding:16px 18px;
+    box-shadow: var(--shadow); min-height: 480px;
+  }
+  .preview-kicker{
+    font-family:'Lora'; font-size:.65rem; text-transform:uppercase; letter-spacing:2px;
+    color: var(--red); border-bottom:1px solid var(--ink); padding-bottom:4px; margin-bottom:6px;
+  }
+  #prevHeadline{
+    font-family:'Playfair Display'; font-weight:900; font-size:1.7rem; line-height:1.05;
+    margin: 2px 0 6px; color: var(--ink); min-height:1.2em;
+  }
+  #prevSub{ font-family:'Lora'; font-style:italic; color: var(--ink-soft); font-size:.9rem; margin-bottom:10px; min-height:1.2em; }
+  .preview-body-grid{ display:flex; gap:14px; }
+  .preview-illustration{ flex:0 0 180px; }
+  #prevCanvas{ width:100%; height:150px; border:2px solid var(--ink); background: repeating-linear-gradient(45deg,#faf7ee,#faf7ee 8px,#f1ecdf 8px,#f1ecdf 16px); }
+  #prevCaption{ font-family:'Lora'; font-size:.7rem; font-style:italic; text-align:center; margin-top:4px; color:var(--ink-soft); min-height:1.4em; }
+  .preview-article{ flex:1; font-size:.82rem; line-height:1.5; column-count:1; min-height: 4em; }
+  .preview-interview{
+    margin-top: 14px; border-top: 2px solid var(--ink); padding-top:10px;
+    font-size:.82rem;
+  }
+  .preview-interview .tag{ font-family:'Lora'; font-weight:700; color:var(--red); font-size:.68rem; text-transform:uppercase; }
+  .preview-interview p{ margin:4px 0; }
+
+  .canvas-tools{ display:flex; gap:8px; margin-bottom:6px; }
+  #drawCanvas{ width:100%; height:150px; border:2px dashed var(--ink); background: #fff; touch-action:none; cursor:crosshair; }
+
+  /* ===== FASE 3: noticiero ===== */
+  .broadcast-stage{
+    background: radial-gradient(circle at 50% 0%, #2a2a2a, #0c0c0c 75%);
+    border-radius: 10px; padding: 24px; color:#fff; position:relative;
+  }
+  .on-air{
+    position:absolute; top:14px; right:18px;
+    font-family:'Lora'; font-weight:700; font-size:.8rem;
+    background:#333; color:#777; padding:6px 14px; border-radius:20px; letter-spacing:1px;
+    border:2px solid #555; transition:.3s;
+  }
+  .on-air.live{ background: var(--red); color:#fff; border-color:#ff8a8a; box-shadow:0 0 16px rgba(163,40,44,.8); }
+  .stage-flex{ display:flex; gap:22px; flex-wrap:wrap; }
+  .mini-preview{ flex:0 0 240px; }
+  .mini-preview .newspaper-preview{ min-height:auto; transform: scale(1); }
+  .teleprompter{
+    flex:1 1 320px; background:#111; border:1px solid #333; border-radius:8px; padding:16px;
+  }
+  .teleprompter h4{ font-family:'Lora'; color:#eab676; margin:0 0 8px; font-size:.85rem; text-transform:uppercase; letter-spacing:1px; }
+  #teleprompterText{
+    width:100%; min-height:220px; background:#000; color:#f4ecd8; border:1px solid #333;
+    font-family:'Lora'; font-size:1.05rem; line-height:1.6; padding:14px; border-radius:6px; resize:vertical;
+  }
+  .timer{
+    font-family:'Playfair Display'; font-size:2rem; text-align:center; margin-top:12px; color:#eab676;
+  }
+  .stage-controls{ display:flex; gap:10px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
+  .tips{ font-family:'Lora'; font-size:.78rem; color:#bbb; margin-top:14px; line-height:1.6; }
+
+  .nav-buttons{ display:flex; justify-content:space-between; margin-top:22px; }
+
+  footer.credit{ text-align:center; font-family:'Lora'; font-size:.72rem; color: var(--news); opacity:.75; margin-top:14px; }
+
+  @media (max-width: 700px){
+    .article-columns{ columns:1; }
+    h1.masthead-title{ font-size:2.1rem; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ transition-duration:.001ms !important; animation-duration:.001ms !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <div class="masthead-top">
+      <span>Edición especial · Ciencia y descubrimientos</span>
+      <span id="dateLine"></span>
+    </div>
+    <h1 class="masthead-title">El Cronista Prehistórico</h1>
+    <div class="masthead-sub">"Noticias que vienen de hace 180 millones de años"</div>
+    <div class="masthead-rules">
+      <span>Precio: 1 idea brillante</span>
+      <span>Reportero/a: <span id="reporterName">tú</span></span>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <div class="tab active" data-phase="1"><span class="eyebrow">Fase 1</span>Lectura compartida</div>
+    <div class="tab" data-phase="2"><span class="eyebrow">Fase 2</span>Maquetación</div>
+    <div class="tab" data-phase="3"><span class="eyebrow">Fase 3</span>Noticiero en vivo</div>
+  </nav>
+
+  <main class="sheet">
+
+    <!-- ===================== FASE 1 ===================== -->
+    <section class="phase active" id="phase-1">
+      <h2 class="phase-title">Fase 1 — Lectura compartida</h2>
+      <p class="lead">Lee la noticia completa. Después, haz una lluvia de ideas: ¿cuáles son los puntos clave? Escríbelos como notas y pégalos en el corcho.</p>
+
+      <div class="article-wire">
+        <div class="article-columns" id="articleText"><!-- injected --></div>
+      </div>
+
+      <p class="lead"><strong>Lluvia de ideas:</strong> anota un punto clave por nota y agrégalo al corcho.</p>
+      <div class="idea-input-row">
+        <input id="ideaInput" placeholder="Ej: Mateo encontró una aleta de piedra dorada en la orilla...">
+        <button class="btn" onclick="addIdea()">Fijar en el corcho +</button>
+      </div>
+      <div class="corkboard" id="corkboard"></div>
+
+      <div class="nav-buttons">
+        <div></div>
+        <button class="btn" onclick="goPhase(2)">Maquetar el periódico →</button>
+      </div>
+    </section>
+
+    <!-- ===================== FASE 2 ===================== -->
+    <section class="phase" id="phase-2">
+      <h2 class="phase-title">Fase 2 — Maquetación de la noticia</h2>
+      <p class="lead">Completa cada parte de tu portada. A la derecha verás cómo va quedando tu periódico en vivo.</p>
+
+      <div class="editor-layout">
+        <div class="editor-panel">
+
+          <div class="field">
+            <label>Tu nombre de reportero/a</label>
+            <input id="inputReporter" placeholder="Escribe tu nombre">
+          </div>
+
+          <div class="field">
+            <label>Titular impactante</label>
+            <small>Resume la idea principal en una frase corta y llamativa</small>
+            <input id="inputHeadline" placeholder="Ej: ¡Un niño descubre al legendario Dragón Marino en la playa!">
+          </div>
+
+          <div class="field">
+            <label>Bajada (subtítulo)</label>
+            <small>Una frase extra que complementa el titular</small>
+            <input id="inputSub" placeholder="Ej: Una criatura fosilizada de 8 metros aparece en la Costa del Sol">
+          </div>
+
+          <div class="qa-hint">
+            <span>¿Qué pasó?</span><span>¿Quiénes participaron?</span><span>¿Dónde ocurrió?</span>
+          </div>
+          <div class="field">
+            <label>Noticia principal</label>
+            <small>Responde en un párrafo corto las 3 preguntas de arriba</small>
+            <textarea id="inputArticle" rows="5" placeholder="Escribe aquí la noticia principal..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>Entrevista exclusiva</label>
+            <small>Inventa una pregunta y una respuesta de un personaje de la noticia</small>
+          </div>
+          <div class="two-col">
+            <div class="field">
+              <label>Pregunta</label>
+              <input id="inputQ" placeholder="Ej: Mateo, ¿qué sentiste al ver la aleta dorada entre las olas?">
+            </div>
+          </div>
+          <div class="field">
+            <label>Respuesta (ficticia)</label>
+            <textarea id="inputA" rows="2" placeholder="Ej: ¡Casi se me cae el balde de caracoles! Pensé que era una roca, pero era una aleta gigante..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>Pie de foto de la ilustración</label>
+            <input id="inputCaption" placeholder="Ej: Así lucía el Dragón Marino de las Golondrinas hace millones de años">
+          </div>
+
+        </div>
+
+        <div class="preview-panel">
+          <div class="newspaper-preview">
+            <div class="preview-kicker">Portada · Edición del lector</div>
+            <div id="prevHeadline">Tu titular aparecerá aquí</div>
+            <div id="prevSub"></div>
+            <div class="preview-body-grid">
+              <div class="preview-illustration">
+                <div class="canvas-tools">
+                  <button class="btn small grey" onclick="clearDraw()">Borrar</button>
+                </div>
+                <canvas id="prevCanvas" width="360" height="300"></canvas>
+                <div id="prevCaption"></div>
+              </div>
+              <div class="preview-article" id="prevArticle">Tu noticia principal aparecerá aquí...</div>
+            </div>
+            <div class="preview-interview">
+              <div class="tag">Entrevista exclusiva</div>
+              <p id="prevQ"><em>Pregunta pendiente...</em></p>
+              <p id="prevA"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn grey" onclick="goPhase(1)">← Atrás</button>
+        <button class="btn" onclick="goPhase(3)">Ir al noticiero en vivo →</button>
+      </div>
+    </section>
+
+    <!-- ===================== FASE 3 ===================== -->
+    <section class="phase" id="phase-3">
+      <h2 class="phase-title">Fase 3 — Presentación del noticiero</h2>
+      <p class="lead">Sostén tu periódico y preséntalo como si fueras un presentador o presentadora de televisión. Usa el guion como ayuda, ¡pero cuéntalo con tus propias palabras!</p>
+
+      <div class="broadcast-stage">
+        <div class="on-air" id="onAirLight">FUERA DE AIRE</div>
+        <div class="stage-flex">
+          <div class="mini-preview">
+            <div class="newspaper-preview" id="miniPreviewMount"></div>
+          </div>
+          <div class="teleprompter">
+            <h4>📺 Guion sugerido (edítalo si quieres)</h4>
+            <textarea id="teleprompterText"></textarea>
+            <div class="timer" id="timerDisplay">01:00</div>
+            <div class="stage-controls">
+              <button class="btn red" id="airBtn" onclick="toggleAir()">🔴 Salir al aire</button>
+              <button class="btn grey" onclick="resetTimer()">Reiniciar tiempo</button>
+            </div>
+            <div class="tips">
+              💡 Consejos: habla despacio y claro · muestra la ilustración a la cámara · termina con "y esto ha sido todo por hoy".
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn grey" onclick="goPhase(2)">← Atrás</button>
+        <button class="btn gold" onclick="finishBroadcast()">🏁 Terminar edición</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="credit">Actividad basada en la noticia "El Dragón Marino de las Golondrinas"</footer>
+</div>
+
+<div class="stamp-overlay" id="stampOverlay" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.4);z-index:50;" onclick="this.style.display='none'">
+  <div style="font-family:'Playfair Display'; font-weight:900; background:#fffdf5; border:6px solid var(--red,#a3282c); color:#a3282c; padding:24px 40px; font-size:2rem; border-radius:10px; text-align:center;">
+    ¡EDICIÓN PUBLICADA!
+    <div style="font-family:'Lora'; font-size:.9rem; color:#333; margin-top:8px;">Toca en cualquier lugar para cerrar</div>
+  </div>
+</div>
+
+<script>
+/* ------------ Dateline ------------- */
+document.getElementById('dateLine').textContent = new Date().toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'});
+
+/* ------------ Article text ------------- */
+const articleParas = [
+"En las playas de la Costa del Sol, un grupo de niños descubrió algo increíble durante una caminata por la orilla. Lo que parecía ser un tronco gigante cubierto de algas y conchas brillantes resultó ser los restos fosilizados de una criatura marina nunca antes vista: el legendario Dragón Marino de las Golondrinas.",
+"Todo ocurrió una mañana después de una fuerte tormenta. Mateo, un niño de 9 años que juntaba caracoles con su abuelo, notó que entre las olas sobresalía una gran aleta de piedra con destellos dorados. Sorprendidos por el hallazgo, avisaron de inmediato a la bióloga marina Lucía Torres y a su equipo de científicos.",
+"Tras varias horas de trabajo usando palas de mano y pinceles de arena, los investigadores desenterraron una criatura fosilizada de 8 metros de largo, con un cuello largo, escamas endurecidas por el tiempo y unos colmillos curvos que usaba para atrapar peces gigantes en la antigüedad.",
+"Según los expertos, este espécimen vivió en las profundidades del océano Pacífico hace millones de años. La doctora Lucía Torres declaró a los medios que este descubrimiento demuestra que los mares antiguos escondían criaturas míticas que hoy solo conocemos en los libros.",
+"Los restos del Dragón Marino serán llevados al Museo de Historia Natural para ser restaurados. Mientras tanto, el alcalde de la ciudad anunció que construirán una estatua en la playa en honor a Mateo y a su abuelo por salvar este valioso tesoro científico."
+];
+const articleDiv = document.getElementById('articleText');
+articleParas.forEach(t=>{
+  const p = document.createElement('p');
+  p.textContent = t;
+  articleDiv.appendChild(p);
+});
+
+/* ------------ Fase 1: corkboard ideas ------------- */
+function addIdea(){
+  const input = document.getElementById('ideaInput');
+  const val = input.value.trim();
+  if(!val) return;
+  const board = document.getElementById('corkboard');
+  const note = document.createElement('div');
+  note.className = 'sticky';
+  note.innerHTML = `${val}<button onclick="this.parentElement.remove()">✕</button>`;
+  board.appendChild(note);
+  input.value = '';
+}
+document.getElementById('ideaInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addIdea(); });
+
+/* ------------ Fase 2: live preview ------------- */
+const reporterInput = document.getElementById('inputReporter');
+const headlineInput = document.getElementById('inputHeadline');
+const subInput = document.getElementById('inputSub');
+const articleInput = document.getElementById('inputArticle');
+const qInput = document.getElementById('inputQ');
+const aInput = document.getElementById('inputA');
+const captionInput = document.getElementById('inputCaption');
+
+function updatePreview(){
+  document.getElementById('reporterName').textContent = reporterInput.value.trim() || 'tú';
+  document.getElementById('prevHeadline').textContent = headlineInput.value.trim() || 'Tu titular aparecerá aquí';
+  document.getElementById('prevSub').textContent = subInput.value.trim();
+  document.getElementById('prevArticle').textContent = articleInput.value.trim() || 'Tu noticia principal aparecerá aquí...';
+  document.getElementById('prevQ').innerHTML = qInput.value.trim() ? '<strong>P:</strong> '+qInput.value.trim() : '<em>Pregunta pendiente...</em>';
+  document.getElementById('prevA').innerHTML = aInput.value.trim() ? '<strong>R:</strong> '+aInput.value.trim() : '';
+  document.getElementById('prevCaption').textContent = captionInput.value.trim();
+  updateTeleprompter();
+}
+[reporterInput, headlineInput, subInput, articleInput, qInput, aInput, captionInput].forEach(el=>{
+  el.addEventListener('input', updatePreview);
+});
+
+/* ------------ Drawing canvas (Fase 2 illustration) ------------- */
+function setupCanvas(id){
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = '#1c1a17';
+  let drawing = false;
+  function pos(e){
+    const rect = canvas.getBoundingClientRect();
+    const sx = canvas.width/rect.width, sy = canvas.height/rect.height;
+    if(e.touches) return {x:(e.touches[0].clientX-rect.left)*sx, y:(e.touches[0].clientY-rect.top)*sy};
+    return {x:(e.clientX-rect.left)*sx, y:(e.clientY-rect.top)*sy};
+  }
+  function start(e){ drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }
+  function move(e){ if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }
+  function end(){ drawing=false; }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+  return canvas;
+}
+const drawCanvas = setupCanvas('prevCanvas');
+function clearDraw(){ const ctx = drawCanvas.getContext('2d'); ctx.clearRect(0,0,drawCanvas.width,drawCanvas.height); }
+
+/* ------------ Navigation ------------- */
+function goPhase(n){
+  document.querySelectorAll('.phase').forEach(s=>s.classList.remove('active'));
+  document.getElementById('phase-'+n).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=> t.classList.toggle('active', Number(t.dataset.phase)===n));
+  for(let i=1;i<n;i++){ document.querySelector(`.tab[data-phase="${i}"]`).classList.add('done'); }
+  if(n === 3) mountMiniPreview();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(t=> t.addEventListener('click', ()=> goPhase(Number(t.dataset.phase))));
+
+/* ------------ Fase 3: mini preview clone + teleprompter + timer ------------- */
+function mountMiniPreview(){
+  const mount = document.getElementById('miniPreviewMount');
+  mount.innerHTML = `
+    <div class="preview-kicker">Portada</div>
+    <div id="miniHeadline" style="font-family:'Playfair Display'; font-weight:900; font-size:1.2rem; margin:4px 0;">${headlineInput.value.trim() || 'Tu titular'}</div>
+    <div style="font-family:'Lora'; font-style:italic; font-size:.8rem; color:#555; margin-bottom:8px;">${subInput.value.trim()}</div>
+    <canvas id="miniCanvasClone" width="240" height="140" style="width:100%;border:2px solid #1c1a17;"></canvas>
+    <div style="font-family:'Lora'; font-size:.65rem; text-align:center; font-style:italic; color:#555; margin-top:4px;">${captionInput.value.trim()}</div>
+  `;
+  const src = document.getElementById('prevCanvas');
+  const dst = document.getElementById('miniCanvasClone');
+  dst.getContext('2d').drawImage(src, 0,0,dst.width,dst.height);
+}
+
+function updateTeleprompter(){
+  const box = document.getElementById('teleprompterText');
+  if(box.dataset.userEdited === 'true') return;
+  const headline = headlineInput.value.trim() || '[tu titular]';
+  const sub = subInput.value.trim();
+  const article = articleInput.value.trim() || '[cuenta aquí qué pasó, quiénes participaron y dónde]';
+  const q = qInput.value.trim();
+  const a = aInput.value.trim();
+  let script = `Buenas tardes, aquí ${reporterInput.value.trim() || 'su reportero/a'} con la noticia del día.\n\n"${headline}"`;
+  if(sub) script += `\n${sub}`;
+  script += `\n\n${article}`;
+  if(q || a){
+    script += `\n\nTuvimos la oportunidad de hablar con uno de los protagonistas.`;
+    if(q) script += `\nLe preguntamos: "${q}"`;
+    if(a) script += `\nY nos respondió: "${a}"`;
+  }
+  script += `\n\nY esto ha sido todo por hoy. ¡Gracias por sintonizar El Cronista Prehistórico!`;
+  box.value = script;
+}
+document.getElementById('teleprompterText').addEventListener('input', function(){ this.dataset.userEdited = 'true'; });
+
+/* Timer */
+let timeLeft = 60;
+let timerInterval = null;
+function renderTimer(){
+  const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+  const s = String(timeLeft%60).padStart(2,'0');
+  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+}
+function resetTimer(){
+  clearInterval(timerInterval); timerInterval=null;
+  timeLeft = 60; renderTimer();
+  document.getElementById('onAirLight').textContent = 'FUERA DE AIRE';
+  document.getElementById('onAirLight').classList.remove('live');
+  document.getElementById('airBtn').textContent = '🔴 Salir al aire';
+}
+function toggleAir(){
+  const light = document.getElementById('onAirLight');
+  const btn = document.getElementById('airBtn');
+  if(timerInterval){
+    clearInterval(timerInterval); timerInterval = null;
+    light.textContent = 'FUERA DE AIRE'; light.classList.remove('live');
+    btn.textContent = '🔴 Salir al aire';
+    return;
+  }
+  light.textContent = 'AL AIRE'; light.classList.add('live');
+  btn.textContent = '⏸ Pausar';
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    if(timeLeft <= 0){
+      clearInterval(timerInterval); timerInterval = null;
+      light.textContent = 'FUERA DE AIRE'; light.classList.remove('live');
+      btn.textContent = '🔴 Salir al aire';
+      timeLeft = 0;
+    }
+    renderTimer();
+  }, 1000);
+}
+renderTimer();
+
+function finishBroadcast(){
+  document.getElementById('stampOverlay').style.display = 'flex';
+  document.querySelector('.tab[data-phase="3"]').classList.add('done');
+}
+
+updatePreview();
+</script>
+</body>
+</html>

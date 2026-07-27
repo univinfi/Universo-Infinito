@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UniversoInfinito — Elige tu mundo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --space-1:#0D0C1D;
+    --space-2:#1A1B35;
+    --space-3:#232454;
+    --ink:#EDEBFF;
+    --ink-soft:#A9A6D6;
+    --turquoise:#2FE6D6;
+    --magenta:#FF4FD8;
+    --yellow:#FFE873;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(255,79,216,.12), transparent 55%),
+      radial-gradient(ellipse at 85% 100%, rgba(47,230,214,.12), transparent 55%),
+      linear-gradient(160deg, var(--space-1), var(--space-2) 60%, var(--space-1));
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  h1,h2{font-family:'Orbitron', sans-serif; margin:0;}
+
+  #starfield{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    display:block;
+  }
+
+  .wrap{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:960px;
+    margin:0 auto;
+    padding:56px 20px 70px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .masthead{ text-align:center; margin-bottom:44px; }
+  .masthead .kicker{
+    display:inline-block;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:.78rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--turquoise);
+    border:1px solid rgba(47,230,214,.4);
+    background:rgba(47,230,214,.08);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  .masthead h1{
+    font-size:clamp(2.3rem, 6.5vw, 3.6rem);
+    font-weight:800;
+    letter-spacing:.02em;
+    background:linear-gradient(90deg, var(--ink) 30%, var(--turquoise) 70%, var(--magenta));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .masthead p{
+    margin:16px auto 0;
+    max-width:480px;
+    color:var(--ink-soft);
+    font-weight:500;
+    font-size:1.05rem;
+    line-height:1.5;
+  }
+
+  .grid{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:24px;
+  }
+  @media(max-width:820px){ .grid{grid-template-columns:1fr;} }
+
+  .card{
+    --glow: var(--turquoise);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    text-align:left;
+    text-decoration:none;
+    color:var(--ink);
+    padding:28px 24px;
+    border-radius:20px;
+    background:rgba(35,36,84,.45);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.02) inset,
+      0 12px 30px rgba(0,0,0,.35),
+      0 0 24px -6px var(--glow);
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .card:hover{
+    transform:translateY(-6px);
+    border-color:var(--glow);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.04) inset,
+      0 16px 36px rgba(0,0,0,.4),
+      0 0 40px -4px var(--glow);
+  }
+  .card.c-yellow{ --glow: var(--yellow); }
+  .card.c-magenta{ --glow: var(--magenta); }
+  .card.c-turquoise{ --glow: var(--turquoise); }
+
+  .card .icon{
+    font-size:2.2rem;
+    width:60px; height:60px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:16px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 0 18px -4px var(--glow);
+  }
+  .card h2{ font-size:1.2rem; font-weight:700; line-height:1.3; letter-spacing:.01em; }
+  .card p{ margin:0; color:var(--ink-soft); font-weight:400; font-size:.92rem; line-height:1.5; flex:1; }
+
+  .enter{
+    align-self:flex-start;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:.88rem;
+    letter-spacing:.02em;
+    border:1px solid var(--glow);
+    border-radius:10px;
+    padding:9px 16px;
+    background:transparent;
+    color:var(--glow);
+    box-shadow:0 0 14px -4px var(--glow);
+    transition:background .2s ease, color .2s ease;
+  }
+  .card:hover .enter{ background:var(--glow); color:var(--space-1); }
+
+  footer{
+    margin-top:48px;
+    color:var(--ink-soft);
+    font-weight:500;
+    font-size:.85rem;
+    text-align:center;
+    letter-spacing:.02em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    #starfield{ display:none; }
+  }
+</style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+
+  <div class="wrap">
+    <div class="masthead">
+      <span class="kicker">Tres mundos, una sola órbita</span>
+      <h1>UniversoInfinito</h1>
+      <p>Elige un taller y crea tu propia historia, noticia o periódico. Cada mundo tiene sus propias reglas del juego.</p>
+    </div>
+
+    <div class="grid">
+      <a class="card c-yellow" href="caja-magica-historias.html">
+        <span class="icon">📦</span>
+        <h2>La Caja Mágica de Historias</h2>
+        <p>Saca cartas al azar de personaje, escenario y objeto, graba tu voz y arma un cuento sobre la marcha.</p>
+        <span class="enter">Entrar →</span>
+      </a>
+
+      <a class="card c-magenta" href="noticias-universo-x.html">
+        <span class="icon">🛸</span>
+        <h2>Noticias del Universo X</h2>
+        <p>Redacta titulares imposibles y maqueta tu propio tabloide de sucesos extraterrestres y absurdos.</p>
+        <span class="enter">Entrar →</span>
+      </a>
+
+      <a class="card c-turquoise" href="periodico-dragon-marino.html">
+        <span class="icon">🦕</span>
+        <h2>El Cronista Prehistórico</h2>
+        <p>Diseña un periódico de la era de los dinosaurios, con titulares, columnas y crónicas ilustradas.</p>
+        <span class="enter">Entrar →</span>
+      </a>
+    </div>
+
+    <footer>Hecho a mano, hoja por hoja, en algún rincón de la galaxia. 🪐✨</footer>
+  </div>
+
+<script>
+(function(){
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var canvas = document.getElementById('starfield');
+  var ctx = canvas.getContext('2d');
+  var W, H, DPR;
+  var stars = [];
+  var galaxies = [];
+  var mouse = { x:-9999, y:-9999, active:false };
+
+  var COLORS = ['255,255,255', '47,230,214', '255,79,216', '255,232,115'];
+
+  function sizeCanvas(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  function makeStars(){
+    var count = Math.min(160, Math.floor((W * H) / 10000));
+    stars = [];
+    for(var i = 0; i < count; i++){
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.4 + 0.4,
+        depth: Math.random() * 0.6 + 0.4,
+        alphaBase: Math.random() * 0.5 + 0.35,
+        twinkleSpeed: Math.random() * 0.02 + 0.006,
+        twinklePhase: Math.random() * Math.PI * 2,
+        color: COLORS[Math.floor(Math.random() * (Math.random() < 0.75 ? 1 : COLORS.length))],
+        ox: 0, oy: 0
+      });
+    }
+  }
+
+  // Bake a spiral galaxy ONCE into an offscreen canvas (arms, haze, core).
+  // Every frame we just rotate + stamp this image — far cheaper than
+  // redrawing hundreds of glowing particles per frame.
+  function bakeGalaxy(radius, arms, colorA, colorB){
+    var size = Math.ceil(radius * 2.5);
+    var off = document.createElement('canvas');
+    off.width = size;
+    off.height = size;
+    var octx = off.getContext('2d');
+    octx.translate(size / 2, size / 2);
+
+    // ambient haze
+    var haze = octx.createRadialGradient(0, 0, 0, 0, 0, radius);
+    haze.addColorStop(0, 'rgba(' + colorA + ',0.4)');
+    haze.addColorStop(0.45, 'rgba(' + colorB + ',0.2)');
+    haze.addColorStop(1, 'rgba(0,0,0,0)');
+    octx.fillStyle = haze;
+    octx.beginPath();
+    octx.arc(0, 0, radius, 0, Math.PI * 2);
+    octx.fill();
+
+    octx.globalCompositeOperation = 'lighter';
+
+    var perArm = 260;
+    for(var a = 0; a < arms; a++){
+      var armOffset = (a / arms) * Math.PI * 2;
+      for(var i = 0; i < perArm; i++){
+        var tt = i / perArm;
+        var theta = armOffset + tt * 2.6 * Math.PI + Math.pow(tt, 0.6) * 1.4;
+        var jitter = (Math.random() - 0.5) * (0.14 + tt * 0.22);
+        var r = radius * (0.05 + Math.pow(tt, 0.85) * 0.95);
+        var x = Math.cos(theta + jitter) * r;
+        var y = Math.sin(theta + jitter) * r * (0.42 + Math.random() * 0.1);
+        var pSize = (1 - tt) * 3.8 + 1.1;
+        var alpha = (1 - tt) * 0.85 + 0.28;
+        var color = (a % 2 === 0) ? colorA : colorB;
+        octx.beginPath();
+        octx.fillStyle = 'rgba(' + color + ',' + alpha.toFixed(3) + ')';
+        octx.arc(x, y, pSize, 0, Math.PI * 2);
+        octx.fill();
+      }
+    }
+
+    // bright core
+    var core = octx.createRadialGradient(0, 0, 0, 0, 0, radius * 0.18);
+    core.addColorStop(0, 'rgba(255,255,255,0.95)');
+    core.addColorStop(0.4, 'rgba(255,232,115,0.7)');
+    core.addColorStop(1, 'rgba(255,232,115,0)');
+    octx.fillStyle = core;
+    octx.beginPath();
+    octx.arc(0, 0, radius * 0.18, 0, Math.PI * 2);
+    octx.fill();
+
+    return { canvas: off, size: size };
+  }
+
+  function makeGalaxies(){
+    var base = Math.min(W, H);
+    galaxies = [
+      {
+        cx: W * 0.20, cy: H * 0.26,
+        dir: 1, speed: 0.00006,
+        rotation: Math.random() * Math.PI * 2,
+        sprite: bakeGalaxy(base * 0.62, 3, '255,79,216', '47,230,214')
+      },
+      {
+        cx: W * 0.84, cy: H * 0.78,
+        dir: -1, speed: 0.00009,
+        rotation: Math.random() * Math.PI * 2,
+        sprite: bakeGalaxy(base * 0.46, 2, '47,230,214', '255,232,115')
+      }
+    ];
+  }
+
+  function init(){
+    sizeCanvas();
+    makeStars();
+    makeGalaxies();
+  }
+
+  var resizeTimer = null;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(init, 150);
+  });
+  window.addEventListener('mousemove', function(e){
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    mouse.active = true;
+  });
+  window.addEventListener('mouseleave', function(){ mouse.active = false; });
+
+  var visible = true;
+  document.addEventListener('visibilitychange', function(){
+    visible = !document.hidden;
+  });
+
+  function drawGalaxy(g, dt){
+    g.rotation += g.dir * g.speed * dt;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.translate(g.cx, g.cy);
+    ctx.rotate(g.rotation);
+    ctx.drawImage(g.sprite.canvas, -g.sprite.size / 2, -g.sprite.size / 2);
+    ctx.restore();
+  }
+
+  var lastTime = null;
+
+  function tick(now){
+    requestAnimationFrame(tick);
+    if(!visible) return;
+    if(lastTime === null) lastTime = now;
+    var dt = now - lastTime;
+    lastTime = now;
+
+    ctx.clearRect(0, 0, W, H);
+
+    for(var g = 0; g < galaxies.length; g++){
+      drawGalaxy(galaxies[g], reduceMotion ? 0 : dt);
+    }
+
+    for(var i = 0; i < stars.length; i++){
+      var s = stars[i];
+
+      var driftX = reduceMotion ? 0 : Math.sin((now * 0.0015) + s.twinklePhase) * 6 * s.depth;
+      var driftY = reduceMotion ? 0 : Math.cos((now * 0.0012) + s.twinklePhase) * 4 * s.depth;
+
+      var targetX = s.x + driftX;
+      var targetY = s.y + driftY;
+
+      var repelX = 0, repelY = 0;
+      var glowBoost = 0;
+      if(mouse.active){
+        var dx = targetX - mouse.x;
+        var dy = targetY - mouse.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var rad = 110;
+        if(dist < rad){
+          var force = (1 - dist / rad);
+          var ang = Math.atan2(dy, dx);
+          repelX = Math.cos(ang) * force * 22;
+          repelY = Math.sin(ang) * force * 22;
+          glowBoost = force;
+        }
+      }
+
+      s.ox += (repelX - s.ox) * 0.12;
+      s.oy += (repelY - s.oy) * 0.12;
+
+      var drawX = targetX + s.ox;
+      var drawY = targetY + s.oy;
+
+      var twinkle = reduceMotion ? 1 : (0.5 + 0.5 * Math.sin(now * s.twinkleSpeed + s.twinklePhase));
+      var alpha = Math.min(1, s.alphaBase * (0.6 + 0.4 * twinkle) + glowBoost * 0.5);
+      var radius = s.r * (1 + glowBoost * 1.6);
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(' + s.color + ',' + alpha.toFixed(3) + ')';
+      if(glowBoost > 0.05){
+        ctx.shadowColor = 'rgba(' + s.color + ',0.9)';
+        ctx.shadowBlur = 8 * glowBoost;
+      } else {
+        ctx.shadowBlur = 0;
+      }
+      ctx.arc(drawX, drawY, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  init();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
