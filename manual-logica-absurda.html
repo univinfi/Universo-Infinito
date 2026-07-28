@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Gran Manual de la Lógica Absurda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cyan:#2DE1FC;
+    --yellow:#FFE93A;
+    --orange:#FF7A1A;
+    --purple:#B14EFF;
+    --ink:#0B0B0F;
+    --paper:#FDF9F3;
+    --card:#FFFFFF;
+    --blueprint:#0B2A4A;
+    --blueprint-line:rgba(255,255,255,.16);
+    --blueprint-line-strong:rgba(255,255,255,.3);
+    --green:#1FAA59;
+    --red:#FF4D4D;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    background:
+      repeating-linear-gradient(0deg, rgba(11,42,74,.06) 0 1px, transparent 1px 26px),
+      repeating-linear-gradient(90deg, rgba(11,42,74,.06) 0 1px, transparent 1px 26px),
+      var(--paper);
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{font-family:'Fredoka', sans-serif; font-weight:600; margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline:3px solid var(--purple); outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001s !important; transition-duration:.001s !important;} }
+
+  .nb{ /* neobrutalist box helper */
+    border:3px solid var(--ink);
+    box-shadow:6px 6px 0 var(--ink);
+    background:var(--card);
+  }
+
+  /* ---------- navbar ---------- */
+  .navbar{
+    position:sticky; top:0; z-index:40;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    flex-wrap:wrap;
+    padding:14px 22px;
+    background:var(--ink);
+    border-bottom:4px solid var(--purple);
+  }
+  .nav-logo{display:flex; align-items:center; gap:10px; color:#fff;}
+  .gear{font-size:1.6rem; display:inline-block; animation:spin 6s linear infinite;}
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .nav-logo .display{font-size:1.15rem; color:#fff;}
+  .nav-actions{display:flex; gap:10px; flex-wrap:wrap;}
+
+  .btn{
+    font-family:'Fredoka', sans-serif; font-weight:600; font-size:.92rem;
+    border:3px solid var(--ink); border-radius:10px; padding:10px 18px;
+    background:var(--yellow); color:var(--ink);
+    box-shadow:4px 4px 0 var(--ink);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--ink);}
+  .btn:active{transform:translate(1px,1px); box-shadow:2px 2px 0 var(--ink);}
+  .btn.cyan{background:var(--cyan);}
+  .btn.orange{background:var(--orange); color:#fff;}
+  .btn.purple{background:var(--purple); color:#fff;}
+  .btn.green{background:var(--green); color:#fff;}
+  .btn.ghost{background:#fff;}
+  .btn.dark{background:var(--ink); color:#fff; box-shadow:4px 4px 0 var(--purple);}
+  .btn.sm{padding:7px 12px; font-size:.8rem; box-shadow:3px 3px 0 var(--ink);}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .btn-row{display:flex; gap:10px; flex-wrap:wrap;}
+
+  .wrap{max-width:1080px; margin:0 auto; padding:28px 20px 60px;}
+
+  /* ---------- banner: desafío del día ---------- */
+  .banner{
+    border-radius:18px; padding:26px 26px 22px;
+    margin-bottom:26px;
+    background:linear-gradient(135deg, var(--purple), var(--cyan));
+    color:#fff;
+  }
+  .banner-inner{
+    background:var(--card); color:var(--ink);
+    border:3px solid var(--ink); border-radius:14px;
+    padding:22px 24px; box-shadow:6px 6px 0 rgba(0,0,0,.35);
+  }
+  .eyebrow{
+    display:inline-block; font-family:'Fredoka', sans-serif; font-weight:600;
+    font-size:.75rem; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--ink); color:#fff; padding:4px 12px; border-radius:999px;
+    margin-bottom:12px;
+  }
+  .problem-text{font-size:1.5rem; line-height:1.25; margin-bottom:16px; min-height:2.5em;}
+  .banner .btn-row{margin-top:4px; align-items:center;}
+  .engine-tag{font-size:.78rem; font-weight:700; color:#514a3f; font-style:italic;}
+
+  /* ---------- studio layout ---------- */
+  .studio-title{margin:34px 0 16px;}
+  .studio-title h2{font-size:1.5rem;}
+  .studio-title p{color:#514a3f; font-weight:600; font-size:.9rem; margin-top:4px;}
+
+  .studio-grid{
+    display:grid; grid-template-columns:1.15fr 1fr; gap:20px; align-items:start;
+  }
+  @media(max-width:860px){.studio-grid{grid-template-columns:1fr;}}
+
+  /* ---------- blueprint canvas ---------- */
+  .blueprint-panel{
+    border-radius:16px; padding:16px;
+    background:var(--ink);
+  }
+  .blueprint-wrap{
+    position:relative; border-radius:10px; overflow:hidden;
+    border:3px solid #fff;
+  }
+  .blueprint-bg{
+    background:
+      repeating-linear-gradient(0deg, var(--blueprint-line) 0 1px, transparent 1px 24px),
+      repeating-linear-gradient(90deg, var(--blueprint-line) 0 1px, transparent 1px 24px),
+      repeating-linear-gradient(0deg, var(--blueprint-line-strong) 0 2px, transparent 2px 120px),
+      repeating-linear-gradient(90deg, var(--blueprint-line-strong) 0 2px, transparent 2px 120px),
+      var(--blueprint);
+    width:100%; aspect-ratio:4/3; position:relative;
+  }
+  #inventCanvas{
+    position:absolute; inset:0; width:100%; height:100%; touch-action:none; cursor:crosshair;
+  }
+  .canvas-label{
+    position:absolute; top:8px; left:10px; color:rgba(255,255,255,.55);
+    font-family:'Fredoka', sans-serif; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  .tools-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; align-items:center;}
+  .tool-btn{
+    border:2.5px solid #fff; background:transparent; color:#fff; border-radius:8px;
+    padding:7px 11px; font-size:1rem; font-weight:700;
+  }
+  .tool-btn.active{background:var(--yellow); color:var(--ink); border-color:var(--yellow);}
+  .swatch{width:24px; height:24px; border-radius:50%; border:2px solid #fff; cursor:pointer;}
+  .swatch.active{outline:2px solid var(--cyan); outline-offset:2px;}
+  .thickness{display:flex; align-items:center; gap:6px; color:#fff; font-size:.78rem; font-weight:700;}
+  .thickness input{width:80px;}
+  .sticker-btn{font-size:1.15rem; background:transparent; border:2px solid transparent; border-radius:6px; padding:2px 5px;}
+  .sticker-btn.active{border-color:var(--yellow);}
+
+  /* ---------- patent form ---------- */
+  .patent-form{border-radius:16px; padding:22px;}
+  label{display:block; font-weight:700; font-size:.8rem; text-transform:uppercase; letter-spacing:.03em; color:#514a3f; margin-bottom:5px;}
+  input[type="text"], textarea, select{
+    width:100%; font-family:'Inter', sans-serif; font-size:1rem;
+    border:2.5px solid var(--ink); border-radius:8px; padding:10px 12px;
+    background:#fff; color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:70px;}
+  .field{margin-bottom:15px;}
+
+  .stamp-fx{
+    position:fixed; inset:0; z-index:70; display:none;
+    align-items:center; justify-content:center; pointer-events:none;
+  }
+  .stamp-fx.show{display:flex;}
+  .stamp-mark{
+    font-family:'Fredoka', sans-serif; font-weight:700; color:var(--green);
+    border:8px solid var(--green); border-radius:16px;
+    padding:20px 34px; font-size:1.6rem; text-align:center; text-transform:uppercase;
+    transform:rotate(-8deg) scale(0);
+    background:rgba(255,255,255,.92);
+    animation:stampIn .5s cubic-bezier(.2,1.4,.4,1) forwards;
+  }
+  @keyframes stampIn{
+    0%{transform:rotate(-8deg) scale(2.2); opacity:0;}
+    60%{transform:rotate(-8deg) scale(.92); opacity:1;}
+    100%{transform:rotate(-8deg) scale(1); opacity:1;}
+  }
+  .confetti-piece{position:fixed; top:-20px; width:10px; height:16px; z-index:69; pointer-events:none;}
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; padding:12px 20px; border-radius:999px;
+    font-weight:700; font-size:.85rem; opacity:0; pointer-events:none;
+    transition:transform .3s ease, opacity .3s ease; z-index:60;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* ---------- gallery modal ---------- */
+  .overlay{position:fixed; inset:0; background:rgba(11,11,15,.7); display:none; align-items:flex-start; justify-content:center; z-index:80; padding:30px 16px; overflow-y:auto;}
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--paper); border-radius:16px; max-width:920px; width:100%;
+    padding:26px; border:3px solid var(--ink); box-shadow:8px 8px 0 var(--purple);
+  }
+  .modal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+  .modal-head h2{font-size:1.35rem;}
+
+  .patent-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:16px;}
+  .patent-card{
+    background:#fff; border-radius:12px; overflow:hidden;
+    border:3px solid var(--ink); box-shadow:4px 4px 0 rgba(11,11,15,.2);
+    display:flex; flex-direction:column;
+  }
+  .patent-card .thumb{aspect-ratio:4/3; background:var(--blueprint); overflow:hidden;}
+  .patent-card .thumb img{width:100%; height:100%; object-fit:cover;}
+  .patent-card .body{padding:12px 14px; display:flex; flex-direction:column; gap:6px; flex:1;}
+  .patent-card .num{font-size:.68rem; font-weight:800; color:var(--green); letter-spacing:.05em;}
+  .patent-card .name{font-family:'Fredoka', sans-serif; font-size:1.05rem; line-height:1.2;}
+  .patent-card .energy{
+    display:inline-block; font-size:.65rem; font-weight:800; text-transform:uppercase;
+    background:var(--yellow); border:2px solid var(--ink); border-radius:999px; padding:2px 8px; width:fit-content;
+  }
+  .patent-card .desc{font-size:.8rem; color:#514a3f; line-height:1.4;}
+  .patent-card .card-actions{margin-top:auto; display:flex; gap:6px; flex-wrap:wrap;}
+  .empty-state{color:#514a3f; font-weight:600; text-align:center; padding:30px 10px; font-size:.9rem; grid-column:1/-1;}
+
+  footer{text-align:center; color:#7a7365; font-weight:600; font-size:.78rem; margin-top:10px;}
+
+  /* ---------- print certificate ---------- */
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{position:absolute; top:0; left:0; width:100%; margin:0; padding:0;}
+    .navbar, .toast, .overlay{display:none !important;}
+  }
+  #printArea{position:absolute; left:-9999px; top:0; width:210mm; min-height:297mm; background:#fff; padding:18mm; font-family:'Inter', sans-serif; color:#0B0B0F;}
+  #printArea .cert-border{border:6px double #0B2A4A; padding:26px; height:100%;}
+  #printArea .cert-head{text-align:center; margin-bottom:10px;}
+  #printArea .cert-head .cert-eyebrow{font-family:'Fredoka', sans-serif; font-size:.85rem; letter-spacing:.15em; text-transform:uppercase; color:#0B2A4A;}
+  #printArea .cert-head h1{font-family:'Fredoka', sans-serif; font-size:1.7rem; margin:6px 0;}
+  #printArea .cert-num{text-align:center; font-weight:800; color:#1FAA59; margin-bottom:18px;}
+  #printArea .cert-name{text-align:center; font-family:'Fredoka', sans-serif; font-size:1.6rem; margin:10px 0 18px;}
+  #printArea .cert-img{display:block; max-width:100%; max-height:260px; margin:0 auto 18px; border:3px solid #0B2A4A;}
+  #printArea .cert-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; font-size:.9rem; margin-bottom:14px;}
+  #printArea .cert-block{border:1.5px solid #ccc; border-radius:8px; padding:10px 12px;}
+  #printArea .cert-block strong{display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:#0B2A4A; margin-bottom:4px;}
+  #printArea .cert-footer{display:flex; justify-content:space-between; margin-top:26px; font-size:.8rem; color:#514a3f;}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="nav-logo">
+    <span class="gear">📐</span>
+    <span class="display">El Gran Manual de la Lógica Absurda</span>
+  </div>
+  <div class="nav-actions">
+    <button class="btn cyan sm" onclick="openGallery()">📜 Mi Galería de Patentes</button>
+    <button class="btn orange sm" onclick="randomProblem()">🎲 Problema Aleatorio</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ===== Banner: desafío del día ===== -->
+  <div class="banner">
+    <div class="banner-inner">
+      <span class="eyebrow">🤖 Generador automático de problemas — Motor de Absurdez™</span>
+      <p class="problem-text" id="problemText"></p>
+      <div class="btn-row">
+        <button class="btn purple" onclick="randomProblem()">🎲 Otro problema</button>
+        <span class="engine-tag">Miles de combinaciones posibles · nunca se repiten</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Estudio de invención ===== -->
+  <div class="studio-title">
+    <h2>🧪 El Estudio de Invención</h2>
+    <p>Dibuja tu plano y completa la ficha oficial de tu patente.</p>
+  </div>
+
+  <div class="studio-grid">
+    <!-- blueprint canvas -->
+    <div class="blueprint-panel">
+      <div class="blueprint-wrap">
+        <div class="blueprint-bg">
+          <span class="canvas-label">Plano técnico — Blueprint</span>
+          <canvas id="inventCanvas" width="640" height="480"></canvas>
+        </div>
+      </div>
+      <div class="tools-row">
+        <button class="tool-btn active" data-tool="pencil" onclick="setTool('pencil', this)" title="Lápiz">✏️</button>
+        <button class="tool-btn" data-tool="line" onclick="setTool('line', this)" title="Línea">📏</button>
+        <button class="tool-btn" data-tool="arrow" onclick="setTool('arrow', this)" title="Flecha">➡️</button>
+        <button class="tool-btn" data-tool="eraser" onclick="setTool('eraser', this)" title="Borrador">🧽</button>
+        <span class="swatch active" style="background:#fff" data-color="#FFFFFF" onclick="pickColor(this)"></span>
+        <span class="swatch" style="background:#FFE93A" data-color="#FFE93A" onclick="pickColor(this)"></span>
+        <span class="swatch" style="background:#39FF7A" data-color="#39FF7A" onclick="pickColor(this)"></span>
+        <span class="swatch" style="background:#FF4D4D" data-color="#FF4D4D" onclick="pickColor(this)"></span>
+        <div class="thickness">✒️<input type="range" id="thickness" min="2" max="14" value="4"></div>
+      </div>
+      <div class="tools-row">
+        <span style="color:#fff; font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-right:4px;">Sellos:</span>
+        <button class="sticker-btn" data-sticker="⚙️" onclick="setTool('sticker', this, '⚙️')">⚙️</button>
+        <button class="sticker-btn" data-sticker="💡" onclick="setTool('sticker', this, '💡')">💡</button>
+        <button class="sticker-btn" data-sticker="⚡" onclick="setTool('sticker', this, '⚡')">⚡</button>
+        <button class="sticker-btn" data-sticker="↗️" onclick="setTool('sticker', this, '↗️')">↗️</button>
+        <button class="sticker-btn" data-sticker="📎" onclick="setTool('sticker', this, '📎')">📎</button>
+        <button class="sticker-btn" data-sticker="🌀" onclick="setTool('sticker', this, '🌀')">🌀</button>
+        <button class="btn sm dark" onclick="clearCanvas()">🗑️ Limpiar lienzo</button>
+      </div>
+    </div>
+
+    <!-- patent form -->
+    <div class="patent-form nb">
+      <span class="eyebrow" style="background:var(--purple);">📋 Ficha oficial de la patente</span>
+      <div class="field" style="margin-top:14px;">
+        <label for="pName">Nombre del invento</label>
+        <input type="text" id="pName" placeholder="El Atrapa-Calcetines Láser 3000">
+      </div>
+      <div class="field">
+        <label for="pHow">¿Cómo funciona?</label>
+        <textarea id="pHow" rows="3" placeholder="Explica qué hace este botón o esta palanca..."></textarea>
+      </div>
+      <div class="field">
+        <label for="pEnergy">Fuente de energía</label>
+        <select id="pEnergy">
+          <option>Jugo de Naranja</option>
+          <option>Baterías de Cacao</option>
+          <option>Rayos Cósmicos</option>
+          <option>Cuerda Manual</option>
+          <option>Gatos Corriendo</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="pEffect">Efecto secundario raro</label>
+        <input type="text" id="pEffect" placeholder="Hace sonido de pato cuando se enciende">
+      </div>
+      <button class="btn green" style="width:100%; font-size:1rem; padding:14px;" onclick="patentInvention()">🏛️ ¡Patentar y Registrar en el Manual!</button>
+    </div>
+  </div>
+
+  <footer>Hecho para que ninguna idea disparatada se quede sin patentar 🔩</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="stamp-fx" id="stampFx">
+  <div class="stamp-mark" id="stampMark">Patente Aprobada #001</div>
+</div>
+
+<!-- Gallery modal -->
+<div class="overlay" id="galleryOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>📜 Galería de Patentes</h2>
+      <button class="btn sm ghost" onclick="closeGallery()">✕ Cerrar</button>
+    </div>
+    <div class="patent-grid" id="patentGrid"></div>
+  </div>
+</div>
+
+<!-- hidden print certificate -->
+<div id="printArea">
+  <div class="cert-border">
+    <div class="cert-head">
+      <div class="cert-eyebrow">El Gran Manual de la Lógica Absurda</div>
+      <h1>Certificado Oficial de Patente</h1>
+    </div>
+    <div class="cert-num" id="certNum"></div>
+    <div class="cert-name" id="certName"></div>
+    <img class="cert-img" id="certImg">
+    <div class="cert-grid">
+      <div class="cert-block"><strong>Problema que resuelve</strong><span id="certProblem"></span></div>
+      <div class="cert-block"><strong>Fuente de energía</strong><span id="certEnergy"></span></div>
+      <div class="cert-block" style="grid-column:1/-1;"><strong>¿Cómo funciona?</strong><span id="certHow"></span></div>
+      <div class="cert-block" style="grid-column:1/-1;"><strong>Efecto secundario raro</strong><span id="certEffect"></span></div>
+    </div>
+    <div class="cert-footer">
+      <span id="certDate"></span>
+      <span>Inventor Oficial ✍️ ______________________</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ================= Motor de Absurdez™: generador automático de problemas =================
+     En vez de una lista fija, este motor combina bancos de palabras dentro de varias
+     plantillas de oración. Con miles de combinaciones posibles, y guardando un historial
+     de las últimas oraciones mostradas (persistido en localStorage), el sistema evita
+     repetir un problema que ya se vio recientemente. Cuando el historial se llena,
+     se va "olvidando" lo más antiguo, así el generador nunca se queda sin ideas nuevas. */
+
+  const SUJETOS = [
+    "Los calcetines", "Las nubes", "Los brócolis", "Las sombras de la casa",
+    "Los relojes de la cocina", "Las plantas del salón", "Los libros de la biblioteca",
+    "Los zapatos viejos", "Las hormigas del jardín", "Los espejos de la casa",
+    "Las galletas del frasco", "Los paraguas", "Las bicicletas del garaje",
+    "Los peces de la pecera", "Los globos de cumpleaños", "Las arañas del ático",
+    "Los cepillos de dientes", "Las tareas escolares"
+  ];
+  const ACCIONES = [
+    "se están escapando cada noche", "han empezado a cobrar renta",
+    "se niegan a hacer lo que deben", "cobran vida cuando nadie mira",
+    "solo obedecen si les cantas", "se multiplican cada vez que estornudas",
+    "hablan en un idioma que nadie entiende", "se esconden justo antes de que los necesites",
+    "cambian de color según tu humor", "flotan sin ninguna explicación",
+    "se intercambian de lugar mientras duermes", "solo funcionan si bailas a su alrededor",
+    "se ríen cada vez que alguien se equivoca", "se congelan en el tiempo al mediodía",
+    "han decidido ir a la escuela contigo", "exigen un día libre a la semana"
+  ];
+  const CONDICIONES = [
+    "y nadie puede tocarlos con las manos", "y solo pueden comunicarse por medio de olores",
+    "pero le tienen miedo absoluto al color amarillo", "y solo se calman con música clásica",
+    "y desaparecen si alguien se ríe cerca", "pero solo puedes verlos de reojo",
+    "y se activan justo cuando llueve", "pero odian que los llamen por su nombre real"
+  ];
+
+  const TAREAS = [
+    "alimentar a un gato perezoso", "despertar a un dragón dormido", "peinar a un erizo",
+    "convencer a un fantasma de mudarse", "hacer reír a una piedra",
+    "enseñarle modales a un cocodrilo", "bajar la luna sin que se rompa",
+    "hacer que un caracol llegue a tiempo"
+  ];
+  const RESTRICCIONES = [
+    "levantarte de la cama", "usar las manos", "hacer ningún ruido",
+    "salir de casa", "mirarlo directamente", "gastar ni un centavo"
+  ];
+
+  const PERSONAJES = [
+    "un alienígena", "un pulpo filósofo", "un fantasma muy tímido", "una nube parlanchina",
+    "un robot antiguo", "un dinosaurio con buenos modales", "una estrella fugaz",
+    "un duende de biblioteca"
+  ];
+  const MODOS_COMUNICACION = [
+    "habla con olores", "se comunica con burbujas", "solo entiende chistes malos",
+    "habla al revés", "se expresa con colores", "solo usa mímica",
+    "habla únicamente en rimas", "se comunica con silbidos"
+  ];
+
+  const INVENTO_TIPO = [
+    "medio de transporte", "instrumento musical", "traje espacial", "paraguas",
+    "reloj despertador", "mochila escolar", "robot mascota", "máquina del tiempo"
+  ];
+  const FUENTE_EXTRANA = [
+    "risas", "estornudos", "sueños", "cosquillas", "bostezos", "hipo",
+    "chistes malos", "burbujas de jabón"
+  ];
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function buildRandomProblem(){
+    const t = pick(['A','A','A','B','C','D']); // más peso a la plantilla A para máxima variedad
+    if(t === 'A'){
+      const suj = pick(SUJETOS);
+      const acc = pick(ACCIONES);
+      const cond = Math.random() < 0.55 ? ', ' + pick(CONDICIONES) : '';
+      return `${suj} ${acc}${cond}.`;
+    }
+    if(t === 'B'){
+      return `Necesitamos una máquina para ${pick(TAREAS)} sin ${pick(RESTRICCIONES)}.`;
+    }
+    if(t === 'C'){
+      return `¿Cómo harías para comunicarte con ${pick(PERSONAJES)} que solo ${pick(MODOS_COMUNICACION)}?`;
+    }
+    return `Diseña un ${pick(INVENTO_TIPO)} que funcione únicamente con ${pick(FUENTE_EXTRANA)}.`;
+  }
+
+  const MAX_HISTORY = 150; // cuántas oraciones recientes recuerda el motor antes de "olvidarlas"
+  let problemHistory = load('lom_problem_history', []);
+  let currentProblem = '';
+
+  function persistHistory(){
+    try{ localStorage.setItem('lom_problem_history', JSON.stringify(problemHistory)); }
+    catch(e){ /* almacenamiento no disponible en esta vista previa */ }
+  }
+
+  function generateProblem(){
+    let sentence, attempts = 0;
+    do{
+      sentence = buildRandomProblem();
+      attempts++;
+    } while((problemHistory.includes(sentence) || sentence === currentProblem) && attempts < 60);
+
+    problemHistory.push(sentence);
+    if(problemHistory.length > MAX_HISTORY) problemHistory.shift();
+    persistHistory();
+    return sentence;
+  }
+
+  function setProblemText(p){
+    currentProblem = p;
+    document.getElementById('problemText').textContent = p;
+  }
+  function randomProblem(){
+    setProblemText(generateProblem());
+  }
+
+  /* ================= persistence ================= */
+  function load(key, fallback){
+    try{ return JSON.parse(localStorage.getItem(key)) || fallback; }catch(e){ return fallback; }
+  }
+  let patents = load('lom_patents', []);
+  let patentCounter = parseInt(localStorage.getItem('lom_patent_counter') || '0', 10);
+
+  function persist(){
+    try{
+      localStorage.setItem('lom_patents', JSON.stringify(patents));
+      localStorage.setItem('lom_patent_counter', String(patentCounter));
+    }catch(e){ /* storage unavailable in this preview — data stays in memory for this session */ }
+  }
+
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(()=>t.classList.remove('show'), 2400);
+  }
+
+  /* ================= blueprint canvas ================= */
+  const canvas = document.getElementById('inventCanvas');
+  const ctx = canvas.getContext('2d');
+  let tool = 'pencil', color = '#FFFFFF', thickness = 4, sticker = '⚙️';
+  let drawing = false, startPoint = null, snapshot = null;
+
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+
+  function canvasPos(e){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+    return { x:(e.clientX-rect.left)*scaleX, y:(e.clientY-rect.top)*scaleY };
+  }
+
+  function drawArrowLine(c, from, to, withHead){
+    c.beginPath();
+    c.moveTo(from.x, from.y);
+    c.lineTo(to.x, to.y);
+    c.stroke();
+    if(withHead){
+      const angle = Math.atan2(to.y-from.y, to.x-from.x);
+      const headLen = 16 + thickness;
+      c.beginPath();
+      c.moveTo(to.x, to.y);
+      c.lineTo(to.x - headLen*Math.cos(angle-Math.PI/7), to.y - headLen*Math.sin(angle-Math.PI/7));
+      c.lineTo(to.x - headLen*Math.cos(angle+Math.PI/7), to.y - headLen*Math.sin(angle+Math.PI/7));
+      c.closePath();
+      c.fill();
+    }
+  }
+
+  canvas.addEventListener('pointerdown', e=>{
+    const p = canvasPos(e);
+    thickness = +document.getElementById('thickness').value;
+
+    if(tool === 'sticker'){
+      ctx.font = '46px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillText(sticker, p.x, p.y);
+      return;
+    }
+
+    drawing = true;
+    startPoint = p;
+
+    if(tool === 'pencil' || tool === 'eraser'){
+      ctx.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over';
+      ctx.strokeStyle = color;
+      ctx.lineWidth = tool === 'eraser' ? thickness*3 : thickness;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+    } else if(tool === 'line' || tool === 'arrow'){
+      snapshot = ctx.getImageData(0,0,canvas.width, canvas.height);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = thickness;
+    }
+  });
+
+  canvas.addEventListener('pointermove', e=>{
+    if(!drawing) return;
+    const p = canvasPos(e);
+    if(tool === 'pencil' || tool === 'eraser'){
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    } else if(tool === 'line' || tool === 'arrow'){
+      ctx.putImageData(snapshot, 0, 0);
+      drawArrowLine(ctx, startPoint, p, tool === 'arrow');
+    }
+  });
+
+  window.addEventListener('pointerup', ()=>{
+    drawing = false;
+    ctx.globalCompositeOperation = 'source-over';
+  });
+
+  function setTool(t, el, stickerEmoji){
+    tool = t;
+    if(stickerEmoji) sticker = stickerEmoji;
+    document.querySelectorAll('.tool-btn, .sticker-btn').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function pickColor(el){
+    color = el.dataset.color;
+    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function clearCanvas(){
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+  }
+
+  function drawGridOn(offCtx, w, h){
+    offCtx.fillStyle = '#0B2A4A';
+    offCtx.fillRect(0,0,w,h);
+    offCtx.strokeStyle = 'rgba(255,255,255,.16)';
+    offCtx.lineWidth = 1;
+    for(let x=0; x<=w; x+=24){ offCtx.beginPath(); offCtx.moveTo(x,0); offCtx.lineTo(x,h); offCtx.stroke(); }
+    for(let y=0; y<=h; y+=24){ offCtx.beginPath(); offCtx.moveTo(0,y); offCtx.lineTo(w,y); offCtx.stroke(); }
+    offCtx.strokeStyle = 'rgba(255,255,255,.3)';
+    offCtx.lineWidth = 2;
+    for(let x=0; x<=w; x+=120){ offCtx.beginPath(); offCtx.moveTo(x,0); offCtx.lineTo(x,h); offCtx.stroke(); }
+    for(let y=0; y<=h; y+=120){ offCtx.beginPath(); offCtx.moveTo(0,y); offCtx.lineTo(w,y); offCtx.stroke(); }
+  }
+
+  function exportBlueprintImage(){
+    const off = document.createElement('canvas');
+    off.width = canvas.width; off.height = canvas.height;
+    const offCtx = off.getContext('2d');
+    drawGridOn(offCtx, off.width, off.height);
+    offCtx.drawImage(canvas, 0, 0);
+    return off.toDataURL('image/png');
+  }
+
+  /* ================= sound fx ================= */
+  function playStampSound(){
+    try{
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const actx = new Ctx();
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(140, actx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(60, actx.currentTime + 0.18);
+      gain.gain.setValueAtTime(0.25, actx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.22);
+      osc.connect(gain).connect(actx.destination);
+      osc.start(); osc.stop(actx.currentTime + 0.24);
+
+      const osc2 = actx.createOscillator();
+      const gain2 = actx.createGain();
+      osc2.type = 'sine'; osc2.frequency.value = 880;
+      gain2.gain.setValueAtTime(0.001, actx.currentTime + 0.2);
+      gain2.gain.linearRampToValueAtTime(0.12, actx.currentTime + 0.24);
+      gain2.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.55);
+      osc2.connect(gain2).connect(actx.destination);
+      osc2.start(actx.currentTime+0.2); osc2.stop(actx.currentTime + 0.6);
+    }catch(e){ /* audio not available */ }
+  }
+
+  function launchConfetti(){
+    const colors = ['#2DE1FC','#FFE93A','#FF7A1A','#B14EFF','#1FAA59'];
+    for(let i=0;i<70;i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random()*100 + 'vw';
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.transform = `rotate(${Math.random()*360}deg)`;
+      piece.style.animation = `confettiFall ${2+Math.random()*1.5}s linear forwards`;
+      piece.style.animationDelay = (Math.random()*0.5)+'s';
+      document.body.appendChild(piece);
+      setTimeout(()=>piece.remove(), 4000);
+    }
+  }
+  const styleTag = document.createElement('style');
+  styleTag.textContent = `@keyframes confettiFall{ to{ transform:translateY(105vh) rotate(360deg); opacity:.9; } }`;
+  document.head.appendChild(styleTag);
+
+  /* ================= patent flow ================= */
+  function patentInvention(){
+    const name = document.getElementById('pName').value.trim();
+    if(!name){ toast('⚠️ Ponle un nombre a tu invento primero.'); document.getElementById('pName').focus(); return; }
+
+    patentCounter++;
+    const num = '#' + String(patentCounter).padStart(3,'0');
+    const patent = {
+      id: Date.now(),
+      num,
+      problem: currentProblem,
+      name,
+      how: document.getElementById('pHow').value.trim() || 'Un mecanismo maravillosamente misterioso.',
+      energy: document.getElementById('pEnergy').value,
+      effect: document.getElementById('pEffect').value.trim() || 'Ninguno detectado... por ahora.',
+      image: exportBlueprintImage(),
+      date: new Date().toLocaleDateString('es-ES', { day:'numeric', month:'long', year:'numeric' })
+    };
+    patents.push(patent);
+    persist();
+
+    document.getElementById('stampMark').textContent = 'Patente Aprobada ' + num;
+    document.getElementById('stampFx').classList.add('show');
+    playStampSound();
+    launchConfetti();
+    setTimeout(()=>document.getElementById('stampFx').classList.remove('show'), 1800);
+
+    toast('🏛️ ¡Tu invento fue patentado con éxito!');
+  }
+
+  /* ================= gallery ================= */
+  function openGallery(){
+    renderPatentGrid();
+    document.getElementById('galleryOverlay').classList.add('show');
+  }
+  function closeGallery(){
+    document.getElementById('galleryOverlay').classList.remove('show');
+  }
+  function renderPatentGrid(){
+    const grid = document.getElementById('patentGrid');
+    if(patents.length === 0){
+      grid.innerHTML = '<div class="empty-state">Todavía no has patentado ningún invento. ¡Ve al Estudio de Invención!</div>';
+      return;
+    }
+    grid.innerHTML = [...patents].reverse().map(p => `
+      <div class="patent-card">
+        <div class="thumb"><img src="${p.image}"></div>
+        <div class="body">
+          <span class="num">${p.num}</span>
+          <div class="name">${p.name}</div>
+          <span class="energy">${p.energy}</span>
+          <p class="desc">${p.how.length > 90 ? p.how.slice(0,90)+'…' : p.how}</p>
+          <div class="card-actions">
+            <button class="btn sm green" onclick="printCertificate(${p.id})">🖨️ Certificado</button>
+            <button class="btn sm ghost" onclick="deletePatent(${p.id})">🗑️</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  function deletePatent(id){
+    patents = patents.filter(p=>p.id !== id);
+    persist();
+    renderPatentGrid();
+  }
+
+  function printCertificate(id){
+    const p = patents.find(x=>x.id === id);
+    if(!p) return;
+    document.getElementById('certNum').textContent = 'Patente ' + p.num;
+    document.getElementById('certName').textContent = p.name;
+    document.getElementById('certImg').src = p.image;
+    document.getElementById('certProblem').textContent = p.problem;
+    document.getElementById('certEnergy').textContent = p.energy;
+    document.getElementById('certHow').textContent = p.how;
+    document.getElementById('certEffect').textContent = p.effect;
+    document.getElementById('certDate').textContent = 'Fecha de registro: ' + p.date;
+    setTimeout(()=>window.print(), 100);
+  }
+
+  /* ================= init ================= */
+  setProblemText(generateProblem());
+  clearCanvas();
+</script>
+</body>
+</html>

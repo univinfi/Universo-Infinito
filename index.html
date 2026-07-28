@@ -16,6 +16,7 @@
     --turquoise:#2FE6D6;
     --magenta:#FF4FD8;
     --yellow:#FFE873;
+    --purple:#B14EFF;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -86,7 +87,7 @@
   .grid{
     width:100%;
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:repeat(2, 1fr);
     gap:24px;
   }
   @media(max-width:820px){ .grid{grid-template-columns:1fr;} }
@@ -123,6 +124,7 @@
   .card.c-yellow{ --glow: var(--yellow); }
   .card.c-magenta{ --glow: var(--magenta); }
   .card.c-turquoise{ --glow: var(--turquoise); }
+  .card.c-purple{ --glow: var(--purple); }
 
   .card .icon{
     font-size:2.2rem;
@@ -171,7 +173,7 @@
 
   <div class="wrap">
     <div class="masthead">
-      <span class="kicker">Tres mundos, una sola órbita</span>
+      <span class="kicker">Cuatro mundos, una sola órbita</span>
       <h1>UniversoInfinito</h1>
       <p>Elige un taller y crea tu propia historia, noticia o periódico. Cada mundo tiene sus propias reglas del juego.</p>
     </div>
@@ -197,7 +199,18 @@
         <p>Diseña un periódico de la era de los dinosaurios, con titulares, columnas y crónicas ilustradas.</p>
         <span class="enter">Entrar →</span>
       </a>
-  
+
+      <a class="card c-purple" href="manual-logica-absurda.html">
+        <span class="icon">📐</span>
+        <h2>El Gran Manual de la Lógica Absurda</h2>
+        <p>Resuelve problemas disparatados inventando máquinas imposibles. Dibuja tu plano y patenta tu invento.</p>
+        <span class="enter">Entrar →</span>
+      </a>
+    </div>
+
+    <footer>Hecho a mano, hoja por hoja, en algún rincón de la galaxia. 🪐✨</footer>
+  </div>
+
 <script>
 (function(){
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
