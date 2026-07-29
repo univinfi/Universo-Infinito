@@ -255,6 +255,7 @@
     <button class="btn cyan sm" onclick="openGallery()">📜 Mi Galería de Patentes</button>
     <button class="btn orange sm" onclick="randomProblem()">🎲 Problema Aleatorio</button>
   </div>
+  <div id="uaChip" style="margin-left:10px;"></div>
 </div>
 
 <div class="wrap">
@@ -376,11 +377,17 @@
     </div>
     <div class="cert-footer">
       <span id="certDate"></span>
-      <span>Inventor Oficial ✍️ ______________________</span>
+      <span>Inventor Oficial ✍️ <span id="certInventor">______________________</span></span>
     </div>
   </div>
 </div>
 
+<script src="account.js"></script>
+<script>
+  if(window.UniversoAccount){
+    UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+  }
+</script>
 <script>
   /* ================= Motor de Absurdez™: generador automático de problemas =================
      En vez de una lista fija, este motor combina bancos de palabras dentro de varias
@@ -696,6 +703,7 @@
     };
     patents.push(patent);
     persist();
+    if(window.UniversoAccount) UniversoAccount.setBadge('manual');
 
     document.getElementById('stampMark').textContent = 'Patente Aprobada ' + num;
     document.getElementById('stampFx').classList.add('show');
@@ -753,6 +761,8 @@
     document.getElementById('certHow').textContent = p.how;
     document.getElementById('certEffect').textContent = p.effect;
     document.getElementById('certDate').textContent = 'Fecha de registro: ' + p.date;
+    var profile = window.UniversoAccount ? UniversoAccount.getProfile() : null;
+    document.getElementById('certInventor').textContent = profile && profile.name ? profile.name : '______________________';
     setTimeout(()=>window.print(), 100);
   }
 

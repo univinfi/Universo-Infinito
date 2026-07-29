@@ -305,6 +305,7 @@
     <span id="statEditions">📰 0</span>
     <span id="statWords">🔤 0</span>
   </div>
+  <div id="uaChip" style="margin-left:10px;"></div>
 </div>
 
 <div class="wrap">
@@ -556,6 +557,12 @@
   </div>
 </div>
 
+<script src="account.js"></script>
+<script>
+  if(window.UniversoAccount){
+    UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+  }
+</script>
 <script>
   /* ================= persistence ================= */
   function load(key, fallback){
@@ -909,6 +916,7 @@
     updateStats();
     if(!achievementUnlocked && editions.length >= 1 && words.length >= 5){
       achievementUnlocked = true;
+      if(window.UniversoAccount) UniversoAccount.setBadge('noticias');
       persist();
       launchConfetti();
       document.getElementById('badgeOverlay').classList.add('show');

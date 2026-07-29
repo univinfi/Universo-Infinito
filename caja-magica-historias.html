@@ -435,6 +435,7 @@
     <h1>La Caja Mágica de Historias</h1>
     <p>Convierte objetos cotidianos en una aventura increíble</p>
   </div>
+  <div id="uaChip" style="margin-left:auto;"></div>
 </div>
 
 <div class="wrap">
@@ -605,6 +606,12 @@
   </div>
 </div>
 
+<script src="account.js"></script>
+<script>
+  if(window.UniversoAccount){
+    UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+  }
+</script>
 <script>
   /* ---------------- data ---------------- */
   const PERSONAJES = [
@@ -901,6 +908,7 @@
   function goComplete(){
     clearInterval(timerInterval);
     timerRunning = false;
+    if(window.UniversoAccount) UniversoAccount.setBadge('caja');
     const badge = BADGES[Math.floor(Math.random()*BADGES.length)];
     document.getElementById('badgeEmoji').textContent = badge[0];
     document.getElementById('badgeName').textContent = badge[1];

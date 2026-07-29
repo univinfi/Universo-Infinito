@@ -84,6 +84,161 @@
     line-height:1.5;
   }
 
+  .account-panel{ width:100%; margin-bottom:36px; }
+  .account-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    background:rgba(35,36,84,.45);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;
+    padding:18px 22px;
+    box-shadow:0 12px 30px rgba(0,0,0,.3), 0 0 20px -8px var(--turquoise);
+  }
+  .account-card.empty{ box-shadow:0 12px 30px rgba(0,0,0,.3), 0 0 24px -6px var(--yellow); }
+  .account-id{ display:flex; align-items:center; gap:14px; }
+  .account-avatar{
+    width:48px; height:48px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.5rem;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18);
+    flex-shrink:0;
+  }
+  .account-hello{ font-family:'Orbitron', sans-serif; font-weight:700; font-size:1.02rem; }
+  .account-sub{ color:var(--ink-soft); font-size:.85rem; font-weight:500; margin-top:3px; line-height:1.4; }
+  .account-edit{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:.85rem;
+    border:1px solid var(--turquoise);
+    border-radius:10px;
+    padding:9px 16px;
+    background:transparent;
+    color:var(--turquoise);
+    cursor:pointer;
+    box-shadow:0 0 14px -4px var(--turquoise);
+    white-space:nowrap;
+  }
+  .account-edit.primary{
+    background:var(--yellow);
+    color:var(--space-1);
+    border-color:var(--yellow);
+    box-shadow:0 0 14px -4px var(--yellow);
+  }
+  .account-medals{ margin-top:16px; }
+
+  .account-medals{ margin-top:16px; display:flex; flex-wrap:wrap; gap:10px; }
+  .medal-chip{
+    display:flex; align-items:center; gap:8px;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:.82rem;
+    font-weight:700;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.04);
+    color:var(--ink-soft);
+  }
+  .medal-chip.unlocked{
+    color:var(--space-1);
+    background:var(--medal-color, var(--turquoise));
+    border-color:var(--medal-color, var(--turquoise));
+    box-shadow:0 0 14px -3px var(--medal-color, var(--turquoise));
+  }
+  .medal-chip .lock{ opacity:.55; }
+
+  .done-ribbon{
+    position:absolute;
+    top:14px; right:14px;
+    font-size:.7rem;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    background:rgba(47,230,214,.16);
+    border:1px solid var(--turquoise);
+    color:var(--turquoise);
+    box-shadow:0 0 12px -3px var(--turquoise);
+  }
+
+  .profile-overlay{
+    position:fixed; inset:0; z-index:10;
+    background:rgba(6,5,16,.72);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    display:none;
+    align-items:center; justify-content:center;
+    padding:20px;
+  }
+  .profile-overlay.show{ display:flex; }
+  .profile-modal{
+    width:100%; max-width:420px;
+    background:var(--space-2);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:20px;
+    padding:28px 26px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5), 0 0 40px -10px var(--turquoise);
+  }
+  .profile-modal h3{ font-size:1.15rem; margin-bottom:8px; }
+  .profile-modal .modal-sub{ color:var(--ink-soft); font-size:.87rem; margin-bottom:20px; line-height:1.5; font-weight:500; }
+  .profile-modal label{
+    display:block; font-size:.75rem; font-weight:700; color:var(--ink-soft);
+    margin-bottom:7px; text-transform:uppercase; letter-spacing:.05em;
+  }
+  .name-input{
+    width:100%;
+    padding:11px 14px;
+    border-radius:10px;
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.06);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    font-size:.95rem;
+    margin-bottom:18px;
+  }
+  .name-input:focus{ outline:none; border-color:var(--turquoise); box-shadow:0 0 0 3px rgba(47,230,214,.15); }
+  .avatar-grid{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:22px; }
+  .avatar-option{
+    width:44px; height:44px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.04);
+    font-size:1.3rem;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .avatar-option.selected{
+    border-color:var(--yellow);
+    background:rgba(255,232,115,.16);
+    box-shadow:0 0 14px -3px var(--yellow);
+  }
+  .modal-actions{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .modal-danger{
+    background:none; border:none;
+    color:var(--ink-soft);
+    font-size:.76rem;
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+    font-family:'Space Grotesk', sans-serif;
+  }
+  .modal-submit{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:.92rem;
+    padding:11px 22px;
+    border-radius:10px;
+    border:1px solid var(--yellow);
+    background:var(--yellow);
+    color:var(--space-1);
+    cursor:pointer;
+    box-shadow:0 0 16px -4px var(--yellow);
+  }
+
   .grid{
     width:100%;
     display:grid;
@@ -178,6 +333,8 @@
       <p>Elige un taller y crea tu propia historia, noticia o periódico. Cada mundo tiene sus propias reglas del juego.</p>
     </div>
 
+    <div class="account-panel" id="accountPanel"></div>
+
     <div class="grid">
       <a class="card c-yellow" href="caja-magica-historias.html">
         <span class="icon">📦</span>
@@ -206,8 +363,214 @@
         <p>Resuelve problemas disparatados inventando máquinas imposibles. Dibuja tu plano y patenta tu invento.</p>
         <span class="enter">Entrar →</span>
       </a>
-  
+    </div>
 
+    <footer>Hecho a mano, hoja por hoja, en algún rincón de la galaxia. 🪐✨</footer>
+  </div>
+
+  <div class="profile-overlay" id="profileOverlay">
+    <div class="profile-modal">
+      <h3 id="profileModalTitle">Crea tu cuenta de explorador</h3>
+      <p class="modal-sub">Elige un nombre y un avatar. Se guarda en este navegador, sin contraseña, y tu progreso se comparte entre los 4 mundos.</p>
+      <label for="profileNameInput">Tu nombre</label>
+      <input type="text" id="profileNameInput" class="name-input" maxlength="40" placeholder="Ej: Mateo" autocomplete="off">
+      <label>Elige tu avatar</label>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <div class="modal-actions">
+        <button class="modal-danger" id="btnResetProfile" type="button" style="display:none;">Borrar todo y empezar de nuevo</button>
+        <button class="modal-submit" id="btnSaveProfile" type="button">Comenzar aventura 🚀</button>
+      </div>
+    </div>
+  </div>
+
+<script src="account.js"></script>
+<script>
+(function(){
+  var UA = window.UniversoAccount;
+  var panel = document.getElementById('accountPanel');
+  var overlay = document.getElementById('profileOverlay');
+  var modalTitle = document.getElementById('profileModalTitle');
+  var nameInput = document.getElementById('profileNameInput');
+  var avatarGrid = document.getElementById('avatarGrid');
+  var btnSave = document.getElementById('btnSaveProfile');
+  var btnReset = document.getElementById('btnResetProfile');
+  var selectedAvatar = UA.AVATARS[0];
+
+  var WORLD_ORDER = ['caja', 'noticias', 'periodico', 'manual'];
+  var MEDAL_COLORS = { caja:'var(--yellow)', noticias:'var(--magenta)', periodico:'var(--turquoise)', manual:'var(--purple)' };
+  var HREF_TO_WORLD = {
+    'caja-magica-historias.html': 'caja',
+    'noticias-universo-x.html': 'noticias',
+    'periodico-dragon-marino.html': 'periodico',
+    'manual-logica-absurda.html': 'manual'
+  };
+
+  function buildAvatarGrid(){
+    avatarGrid.innerHTML = '';
+    UA.AVATARS.forEach(function(av){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'avatar-option' + (av === selectedAvatar ? ' selected' : '');
+      btn.textContent = av;
+      btn.addEventListener('click', function(){
+        selectedAvatar = av;
+        Array.prototype.forEach.call(avatarGrid.children, function(c){ c.classList.remove('selected'); });
+        btn.classList.add('selected');
+      });
+      avatarGrid.appendChild(btn);
+    });
+  }
+
+  function openModal(existing){
+    if(existing){
+      modalTitle.textContent = 'Tu cuenta de explorador';
+      nameInput.value = existing.name;
+      selectedAvatar = existing.avatar;
+      btnReset.style.display = 'inline';
+    } else {
+      modalTitle.textContent = 'Crea tu cuenta de explorador';
+      nameInput.value = '';
+      selectedAvatar = UA.AVATARS[Math.floor(Math.random() * UA.AVATARS.length)];
+      btnReset.style.display = 'none';
+    }
+    nameInput.style.borderColor = '';
+    buildAvatarGrid();
+    overlay.classList.add('show');
+    setTimeout(function(){ nameInput.focus(); }, 60);
+  }
+
+  function closeModal(){
+    overlay.classList.remove('show');
+  }
+
+  function renderMedals(){
+    var badges = UA.getBadges();
+    var medals = document.createElement('div');
+    medals.className = 'account-medals';
+    WORLD_ORDER.forEach(function(key){
+      var w = UA.WORLDS[key];
+      var unlocked = badges[key];
+      var chip = document.createElement('span');
+      chip.className = 'medal-chip' + (unlocked ? ' unlocked' : '');
+      chip.style.setProperty('--medal-color', MEDAL_COLORS[key]);
+
+      var icon = document.createElement('span');
+      icon.textContent = unlocked ? w.icon : '🔒';
+      if(!unlocked) icon.className = 'lock';
+
+      var label = document.createElement('span');
+      label.textContent = w.label;
+
+      chip.appendChild(icon);
+      chip.appendChild(label);
+      medals.appendChild(chip);
+    });
+    return medals;
+  }
+
+  function markDoneCards(){
+    var badges = UA.getBadges();
+    var cards = document.querySelectorAll('.card');
+    for(var i = 0; i < cards.length; i++){
+      var cardEl = cards[i];
+      var existingRibbon = cardEl.querySelector('.done-ribbon');
+      if(existingRibbon) existingRibbon.remove();
+      var key = HREF_TO_WORLD[cardEl.getAttribute('href')];
+      if(key && badges[key]){
+        var ribbon = document.createElement('span');
+        ribbon.className = 'done-ribbon';
+        ribbon.textContent = '✓ Completado';
+        cardEl.appendChild(ribbon);
+      }
+    }
+  }
+
+  function renderPanel(){
+    var profile = UA.getProfile();
+    panel.innerHTML = '';
+
+    var card = document.createElement('div');
+    var idBox = document.createElement('div');
+    idBox.className = 'account-id';
+    var avatarBox = document.createElement('div');
+    avatarBox.className = 'account-avatar';
+    var textBox = document.createElement('div');
+    var hello = document.createElement('div');
+    hello.className = 'account-hello';
+    var sub = document.createElement('div');
+    sub.className = 'account-sub';
+    var editBtn = document.createElement('button');
+    editBtn.type = 'button';
+
+    if(profile){
+      card.className = 'account-card';
+      avatarBox.textContent = profile.avatar;
+      hello.textContent = '¡Hola, ' + profile.name + '! 👋';
+      sub.textContent = UA.badgeCount() + ' de 4 mundos completados';
+      editBtn.className = 'account-edit';
+      editBtn.textContent = 'Cambiar de explorador';
+      editBtn.addEventListener('click', function(){ openModal(profile); });
+    } else {
+      card.className = 'account-card empty';
+      avatarBox.textContent = '🌌';
+      hello.textContent = 'Crea tu cuenta de explorador';
+      sub.textContent = 'Guarda tu nombre y avatar en este navegador, sin contraseña.';
+      editBtn.className = 'account-edit primary';
+      editBtn.textContent = 'Crear cuenta';
+      editBtn.addEventListener('click', function(){ openModal(null); });
+    }
+
+    textBox.appendChild(hello);
+    textBox.appendChild(sub);
+    idBox.appendChild(avatarBox);
+    idBox.appendChild(textBox);
+    card.appendChild(idBox);
+    card.appendChild(editBtn);
+    panel.appendChild(card);
+
+    if(profile){
+      panel.appendChild(renderMedals());
+    }
+
+    markDoneCards();
+  }
+
+  btnSave.addEventListener('click', function(){
+    var name = nameInput.value.trim();
+    if(!name){
+      nameInput.style.borderColor = 'var(--magenta)';
+      nameInput.focus();
+      return;
+    }
+    UA.saveProfile(name, selectedAvatar);
+    closeModal();
+    renderPanel();
+  });
+
+  btnReset.addEventListener('click', function(){
+    if(confirm('¿Borrar tu cuenta y todo tu progreso guardado en este navegador?')){
+      UA.resetAll();
+      closeModal();
+      renderPanel();
+    }
+  });
+
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay) closeModal();
+  });
+
+  nameInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter') btnSave.click();
+  });
+
+  renderPanel();
+
+  // primera visita: invita a crear la cuenta de una vez
+  if(!UA.getProfile()){
+    openModal(null);
+  }
+})();
+</script>
 <script>
 (function(){
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

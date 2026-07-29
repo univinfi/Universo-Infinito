@@ -254,6 +254,7 @@
     <div class="masthead-rules">
       <span>Precio: 1 idea brillante</span>
       <span>Reportero/a: <span id="reporterName">tú</span></span>
+      <span id="uaChip"></span>
     </div>
   </header>
 
@@ -417,6 +418,12 @@
   </div>
 </div>
 
+<script src="account.js"></script>
+<script>
+  if(window.UniversoAccount){
+    UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+  }
+</script>
 <script>
 /* ------------ Dateline ------------- */
 document.getElementById('dateLine').textContent = new Date().toLocaleDateString('es-ES', {day:'numeric', month:'long', year:'numeric'});
@@ -452,6 +459,7 @@ document.getElementById('ideaInput').addEventListener('keydown', e=>{ if(e.key==
 
 /* ------------ Fase 2: live preview ------------- */
 const reporterInput = document.getElementById('inputReporter');
+if(window.UniversoAccount) UniversoAccount.prefillName(reporterInput);
 const headlineInput = document.getElementById('inputHeadline');
 const subInput = document.getElementById('inputSub');
 const articleInput = document.getElementById('inputArticle');
@@ -588,6 +596,7 @@ renderTimer();
 function finishBroadcast(){
   document.getElementById('stampOverlay').style.display = 'flex';
   document.querySelector('.tab[data-phase="3"]').classList.add('done');
+  if(window.UniversoAccount) UniversoAccount.setBadge('periodico');
 }
 
 updatePreview();
