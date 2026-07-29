@@ -418,10 +418,14 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="account.js"></script>
 <script>
   if(window.UniversoAccount){
     UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+    UniversoAccount.syncToCloud();
   }
 </script>
 <script>
@@ -596,7 +600,10 @@ renderTimer();
 function finishBroadcast(){
   document.getElementById('stampOverlay').style.display = 'flex';
   document.querySelector('.tab[data-phase="3"]').classList.add('done');
-  if(window.UniversoAccount) UniversoAccount.setBadge('periodico');
+  if(window.UniversoAccount){
+    UniversoAccount.setBadge('periodico');
+    UniversoAccount.incrementStat('periodico_transmisiones', 1);
+  }
 }
 
 updatePreview();

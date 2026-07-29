@@ -334,6 +334,9 @@
     </div>
 
     <div class="account-panel" id="accountPanel"></div>
+    <div style="width:100%; text-align:right; margin-top:-24px; margin-bottom:36px;">
+      <a href="tabla-posiciones.html" style="color:var(--yellow); font-weight:700; font-size:.85rem; text-decoration:none; border:1px solid rgba(255,232,115,.4); padding:8px 16px; border-radius:999px; background:rgba(255,232,115,.08);">🏆 Ver tabla de posiciones</a>
+    </div>
 
     <div class="grid">
       <a class="card c-yellow" href="caja-magica-historias.html">
@@ -363,6 +366,10 @@
         <p>Resuelve problemas disparatados inventando máquinas imposibles. Dibuja tu plano y patenta tu invento.</p>
         <span class="enter">Entrar →</span>
       </a>
+    </div>
+
+    <footer>Hecho a mano, hoja por hoja, en algún rincón de la galaxia. 🪐✨</footer>
+  </div>
 
   <div class="profile-overlay" id="profileOverlay">
     <div class="profile-modal">
@@ -379,6 +386,9 @@
     </div>
   </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="account.js"></script>
 <script>
 (function(){
@@ -528,6 +538,7 @@
       panel.appendChild(renderMedals());
     }
 
+    if(profile) UA.syncToCloud();
     markDoneCards();
   }
 

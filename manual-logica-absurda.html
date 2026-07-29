@@ -382,10 +382,14 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="account.js"></script>
 <script>
   if(window.UniversoAccount){
     UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+    UniversoAccount.syncToCloud();
   }
 </script>
 <script>
@@ -703,7 +707,10 @@
     };
     patents.push(patent);
     persist();
-    if(window.UniversoAccount) UniversoAccount.setBadge('manual');
+    if(window.UniversoAccount){
+      UniversoAccount.setBadge('manual');
+      UniversoAccount.incrementStat('manual_patentes', 1);
+    }
 
     document.getElementById('stampMark').textContent = 'Patente Aprobada ' + num;
     document.getElementById('stampFx').classList.add('show');

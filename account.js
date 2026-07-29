@@ -5,8 +5,12 @@
    se sirvan desde el mismo dominio/carpeta.
    ============================================================ */
 (function(window){
-  var PROFILE_KEY = 'ui_profile';
-  var BADGES_KEY  = 'ui_badges';
+  var PROFILE_KEY  = 'ui_profile';
+  var BADGES_KEY   = 'ui_badges';
+  var STATS_KEY    = 'ui_stats';
+  var PLAYER_ID_KEY = 'ui_player_id';
+
+  var LEADERBOARD_COLLECTION = 'leaderboard';
 
   var WORLDS = {
     caja:      { label:'La Caja Mágica de Historias',        icon:'📦', file:'caja-magica-historias.html' },
@@ -16,6 +20,67 @@
   };
 
   var AVATARS = ['🦊','🐙','🦄','🐲','🚀','🌟','🦖','🐸'];
+
+  // stat key -> puntos que vale cada unidad al calcular el puntaje total
+  var STAT_WEIGHTS = {
+    caja_historias:          6,
+    noticias_ediciones:      6,
+    noticias_palabras:       1,
+    periodico_transmisiones: 6,
+    manual_patentes:         8
+  };
+  var BADGE_WEIGHT = 20; // puntos por cada uno de los 4 mundos completado
+
+  var STAT_LABELS = {
+    caja_historias:          'Historias creadas',
+    noticias_ediciones:      'Ediciones publicadas',
+    noticias_palabras:       'Palabras inventadas',
+    periodico_transmisiones: 'Noticieros transmitidos',
+    manual_patentes:         'Inventos patentados'
+  };
+
+  function getPlayerId(){
+    var id = null;
+    try{ id = localStorage.getItem(PLAYER_ID_KEY); }catch(e){}
+    if(!id){
+      id = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
+      try{ localStorage.setItem(PLAYER_ID_KEY, id); }catch(e){}
+    }
+    return id;
+  }
+
+  function getStats(){
+    var stats = {};
+    try{ stats = JSON.parse(localStorage.getItem(STATS_KEY)) || {}; }catch(e){ stats = {}; }
+    Object.keys(STAT_WEIGHTS).forEach(function(key){
+      if(typeof stats[key] !== 'number') stats[key] = 0;
+    });
+    return stats;
+  }
+
+  function incrementStat(key, amount){
+    if(!(key in STAT_WEIGHTS)) return getStats();
+    var stats = getStats();
+    stats[key] += (typeof amount === 'number' ? amount : 1);
+    try{ localStorage.setItem(STATS_KEY, JSON.stringify(stats)); }catch(e){}
+    syncToCloud();
+    return stats;
+  }
+
+  function clearStats(){
+    try{ localStorage.removeItem(STATS_KEY); }catch(e){}
+  }
+
+  function computeScore(badges, stats){
+    badges = badges || getBadges();
+    stats = stats || getStats();
+    var score = 0;
+    Object.keys(WORLDS).forEach(function(k){ if(badges[k]) score += BADGE_WEIGHT; });
+    Object.keys(STAT_WEIGHTS).forEach(function(k){ score += (stats[k] || 0) * STAT_WEIGHTS[k]; });
+    return score;
+  }
 
   function getProfile(){
     try{
@@ -28,6 +93,7 @@
     var clean = String(name || '').trim().slice(0, 40);
     var profile = { name: clean, avatar: avatar || AVATARS[0], createdAt: Date.now() };
     try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }catch(e){}
+    syncToCloud();
     return profile;
   }
 
@@ -50,6 +116,7 @@
     if(!badges[worldKey]){
       badges[worldKey] = true;
       try{ localStorage.setItem(BADGES_KEY, JSON.stringify(badges)); }catch(e){}
+      syncToCloud();
     }
     return badges;
   }
@@ -64,8 +131,11 @@
   }
 
   function resetAll(){
+    deleteFromCloud();
     clearProfile();
     clearBadges();
+    clearStats();
+    try{ localStorage.removeItem(PLAYER_ID_KEY); }catch(e){}
   }
 
   // Prefills a text input with the saved name, only if the input is empty.
@@ -114,9 +184,95 @@
     return chip;
   }
 
+  /* ============================================================
+     Sincronización con la nube (Firestore) — OPCIONAL.
+     Si no existe window.FIREBASE_CONFIG (o el SDK de Firebase no
+     está cargado), estas funciones no hacen nada y todo sigue
+     funcionando 100% local, como antes.
+     ============================================================ */
+  var _db = null;
+  var _cloudReady = false;
+
+  function _initCloud(){
+    if(_cloudReady) return _db;
+    if(typeof firebase === 'undefined' || !window.FIREBASE_CONFIG) return null;
+    try{
+      if(!firebase.apps || !firebase.apps.length){
+        firebase.initializeApp(window.FIREBASE_CONFIG);
+      }
+      _db = firebase.firestore();
+      _cloudReady = true;
+    }catch(e){
+      _db = null;
+    }
+    return _db;
+  }
+
+  function isCloudEnabled(){
+    return !!_initCloud();
+  }
+
+  function syncToCloud(){
+    var db = _initCloud();
+    if(!db) return;
+    var profile = getProfile();
+    if(!profile || !profile.name) return;
+    var badges = getBadges();
+    var stats = getStats();
+    var data = {
+      name: profile.name,
+      avatar: profile.avatar,
+      badges: badges,
+      stats: stats,
+      score: computeScore(badges, stats),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    db.collection(LEADERBOARD_COLLECTION).doc(getPlayerId()).set(data, { merge:true })
+      .catch(function(err){ console.warn('UniversoAccount: no se pudo sincronizar', err); });
+  }
+
+  function deleteFromCloud(){
+    var db = _initCloud();
+    if(!db) return;
+    db.collection(LEADERBOARD_COLLECTION).doc(getPlayerId()).delete().catch(function(){});
+  }
+
+  // callback(list, status) — list ordenada de mayor a menor puntaje.
+  // status: 'ok' | 'offline' (no hay Firebase configurado) | 'error'
+  // devuelve una función para cancelar la suscripción.
+  function subscribeLeaderboard(callback){
+    var db = _initCloud();
+    if(!db){
+      callback([], 'offline');
+      return function(){};
+    }
+    return db.collection(LEADERBOARD_COLLECTION)
+      .orderBy('score', 'desc')
+      .limit(100)
+      .onSnapshot(function(snapshot){
+        var list = [];
+        snapshot.forEach(function(doc){
+          var d = doc.data();
+          list.push({
+            id: doc.id,
+            name: d.name || '???',
+            avatar: d.avatar || '🌟',
+            badges: d.badges || {},
+            stats: d.stats || {},
+            score: typeof d.score === 'number' ? d.score : 0
+          });
+        });
+        callback(list, 'ok');
+      }, function(err){
+        console.warn('UniversoAccount: error leyendo la tabla de posiciones', err);
+        callback([], 'error');
+      });
+  }
+
   window.UniversoAccount = {
     WORLDS: WORLDS,
     AVATARS: AVATARS,
+    STAT_LABELS: STAT_LABELS,
     getProfile: getProfile,
     saveProfile: saveProfile,
     clearProfile: clearProfile,
@@ -126,6 +282,15 @@
     resetAll: resetAll,
     badgeCount: badgeCount,
     prefillName: prefillName,
-    renderNavChip: renderNavChip
+    renderNavChip: renderNavChip,
+    getStats: getStats,
+    incrementStat: incrementStat,
+    clearStats: clearStats,
+    computeScore: computeScore,
+    getPlayerId: getPlayerId,
+    isCloudEnabled: isCloudEnabled,
+    syncToCloud: syncToCloud,
+    deleteFromCloud: deleteFromCloud,
+    subscribeLeaderboard: subscribeLeaderboard
   };
 })(window);

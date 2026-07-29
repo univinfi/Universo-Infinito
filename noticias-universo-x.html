@@ -557,10 +557,14 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="account.js"></script>
 <script>
   if(window.UniversoAccount){
     UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+    UniversoAccount.syncToCloud();
   }
 </script>
 <script>
@@ -735,6 +739,7 @@
     editions.push(state);
     persist();
     updateStats();
+    if(window.UniversoAccount) UniversoAccount.incrementStat('noticias_ediciones', 1);
     toast('💾 ¡Edición guardada en la galería!');
     checkAchievement();
   }
@@ -821,6 +826,7 @@
     words.push(word);
     persist();
     updateStats();
+    if(window.UniversoAccount) UniversoAccount.incrementStat('noticias_palabras', 1);
     renderWordGrid('wordGrid');
     ['wPalabra','wPron','wDef','wEj'].forEach(id=>document.getElementById(id).value = '');
     toast('🔤 ¡Palabra agregada al diccionario oficial!');

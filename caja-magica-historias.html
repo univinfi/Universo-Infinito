@@ -606,10 +606,14 @@
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <script src="account.js"></script>
 <script>
   if(window.UniversoAccount){
     UniversoAccount.renderNavChip(document.getElementById('uaChip'));
+    UniversoAccount.syncToCloud();
   }
 </script>
 <script>
@@ -908,7 +912,10 @@
   function goComplete(){
     clearInterval(timerInterval);
     timerRunning = false;
-    if(window.UniversoAccount) UniversoAccount.setBadge('caja');
+    if(window.UniversoAccount){
+      UniversoAccount.setBadge('caja');
+      UniversoAccount.incrementStat('caja_historias', 1);
+    }
     const badge = BADGES[Math.floor(Math.random()*BADGES.length)];
     document.getElementById('badgeEmoji').textContent = badge[0];
     document.getElementById('badgeName').textContent = badge[1];
