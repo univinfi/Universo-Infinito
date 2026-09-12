@@ -165,6 +165,87 @@
     box-shadow:0 0 12px -3px var(--turquoise);
   }
 
+  .settings-fab{
+    position:fixed;
+    bottom:22px; right:22px;
+    z-index:16;
+    width:48px; height:48px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(35,36,84,.7);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    color:var(--ink);
+    font-size:1.25rem;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    box-shadow:0 8px 22px rgba(0,0,0,.4);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .settings-fab:hover{
+    transform:rotate(35deg);
+    border-color:var(--turquoise);
+    box-shadow:0 0 20px -4px var(--turquoise);
+  }
+
+  .settings-panel{
+    position:fixed;
+    bottom:80px; right:22px;
+    z-index:16;
+    width:250px;
+    background:var(--space-2);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:16px;
+    padding:16px 18px;
+    box-shadow:0 16px 44px rgba(0,0,0,.5);
+    display:none;
+  }
+  .settings-panel.show{ display:block; }
+  .settings-panel h4{
+    font-size:.72rem; margin:0 0 14px;
+    letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-soft); font-weight:700;
+  }
+  .settings-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .settings-row span{ font-size:.86rem; font-weight:600; line-height:1.35; }
+  .settings-row + .settings-row{
+    margin-top:14px; padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.1);
+  }
+  .volume-row{
+    display:flex; align-items:center; gap:8px;
+    margin-top:10px;
+  }
+  .volume-row span{ font-size:.85rem; opacity:.75; }
+  .volume-row input[type="range"]{
+    flex:1;
+    accent-color: var(--turquoise);
+  }
+  .volume-row input[type="range"]:disabled{ opacity:.4; }
+
+  .switch{
+    width:44px; height:24px; flex:none;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.22);
+    background:rgba(255,255,255,.08);
+    position:relative;
+    cursor:pointer;
+    padding:0;
+  }
+  .switch::after{
+    content:'';
+    position:absolute;
+    top:2px; left:2px;
+    width:18px; height:18px;
+    border-radius:50%;
+    background:var(--ink-soft);
+    transition:transform .18s ease, background .18s ease;
+  }
+  .switch.on{ background:rgba(47,230,214,.22); border-color:var(--turquoise); }
+  .switch.on::after{ transform:translateX(20px); background:var(--turquoise); }
+
   .profile-overlay{
     position:fixed; inset:0; z-index:10;
     background:rgba(6,5,16,.72);
@@ -318,8 +399,8 @@
     letter-spacing:.02em;
   }
 
- 
-  }
+
+
 </style>
 </head>
 <body>
@@ -365,6 +446,28 @@
         <p>Resuelve problemas disparatados inventando máquinas imposibles. Dibuja tu plano y patenta tu invento.</p>
         <span class="enter">Entrar →</span>
       </a>
+    </div>
+
+    <footer>Hecho a mano, hoja por hoja, en algún rincón de la galaxia. 🪐✨</footer>
+  </div>
+
+  <button class="settings-fab" id="settingsBtn" title="Ajustes" aria-label="Abrir ajustes">⚙️</button>
+  <div class="settings-panel" id="settingsPanel">
+    <h4>Ajustes</h4>
+    <div class="settings-row">
+      <span>Animación de fondo<br>(galaxia y estrellas)</span>
+      <button class="switch" id="toggleMotion" type="button" role="switch" aria-checked="true" aria-label="Activar o desactivar la animación de fondo"></button>
+    </div>
+    <div class="settings-row">
+      <span>Música ambiental</span>
+      <button class="switch" id="toggleMusic" type="button" role="switch" aria-checked="false" aria-label="Activar o desactivar la música ambiental"></button>
+    </div>
+    <div class="volume-row">
+      <span>🔈</span>
+      <input type="range" id="musicVolume" min="0" max="1" step="0.05" value="0.5" disabled aria-label="Volumen de la música">
+      <span>🔊</span>
+    </div>
+  </div>
 
   <div class="profile-overlay" id="profileOverlay">
     <div class="profile-modal">
@@ -575,8 +678,237 @@
 </script>
 <script>
 (function(){
+  var KEY = 'ui_motion_enabled';
+
+  function getMotionEnabled(){
+    var v = null;
+    try{ v = localStorage.getItem(KEY); }catch(e){}
+    return v === null ? true : v === '1';
+  }
+  function setMotionEnabled(val){
+    try{ localStorage.setItem(KEY, val ? '1' : '0'); }catch(e){}
+  }
+  window.UI_MOTION = { get: getMotionEnabled, set: setMotionEnabled };
+
+  var fab = document.getElementById('settingsBtn');
+  var panel = document.getElementById('settingsPanel');
+  var toggle = document.getElementById('toggleMotion');
+
+  function renderToggle(){
+    var on = getMotionEnabled();
+    toggle.classList.toggle('on', on);
+    toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+  }
+
+  fab.addEventListener('click', function(e){
+    e.stopPropagation();
+    panel.classList.toggle('show');
+  });
+
+  document.addEventListener('click', function(e){
+    if(panel.classList.contains('show') && !panel.contains(e.target) && e.target !== fab){
+      panel.classList.remove('show');
+    }
+  });
+
+  toggle.addEventListener('click', function(){
+    var next = !getMotionEnabled();
+    setMotionEnabled(next);
+    renderToggle();
+    document.dispatchEvent(new CustomEvent('ui-motion-change', { detail:{ enabled: next } }));
+  });
+
+  renderToggle();
+})();
+</script>
+<script>
+/* ============================================================
+   Música ambiental — 100% generada por código con la Web Audio
+   API (osciladores + delay). No es ningún archivo ni grabación,
+   así que no hay ningún problema de derechos de autor: se
+   "compone" en el navegador de la persona que visita el sitio.
+   ============================================================ */
+(function(){
+  var ENABLED_KEY = 'ui_music_enabled';
+  var VOLUME_KEY  = 'ui_music_volume';
+
+  function getMusicEnabled(){
+    var v = null;
+    try{ v = localStorage.getItem(ENABLED_KEY); }catch(e){}
+    return v === '1';
+  }
+  function setMusicEnabled(val){
+    try{ localStorage.setItem(ENABLED_KEY, val ? '1' : '0'); }catch(e){}
+  }
+  function getVolume(){
+    var v = null;
+    try{ v = localStorage.getItem(VOLUME_KEY); }catch(e){}
+    var n = parseFloat(v);
+    return isNaN(n) ? 0.5 : Math.min(1, Math.max(0, n));
+  }
+  function setVolume(v){
+    try{ localStorage.setItem(VOLUME_KEY, String(v)); }catch(e){}
+  }
+
+  var audioCtx = null, masterGain = null, padFilter = null;
+  var delayNode = null, feedbackGain = null, delayFilter = null;
+  var started = false;
+  var twinkleTimeout = null;
+
+  // acorde abierto, tipo "space pad" (A menor con novena añadida)
+  var CHORD = [55, 82.41, 98, 130.81, 164.81];
+  var BELLS = [523.25, 587.33, 659.25, 783.99, 880, 1046.5];
+
+  function ensureGraph(){
+    if(audioCtx) return audioCtx;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+
+    audioCtx = new AC();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0;
+
+    padFilter = audioCtx.createBiquadFilter();
+    padFilter.type = 'lowpass';
+    padFilter.frequency.value = 1100;
+
+    delayNode = audioCtx.createDelay(1.0);
+    delayNode.delayTime.value = 0.45;
+    feedbackGain = audioCtx.createGain();
+    feedbackGain.gain.value = 0.32;
+    delayFilter = audioCtx.createBiquadFilter();
+    delayFilter.type = 'lowpass';
+    delayFilter.frequency.value = 1800;
+
+    delayNode.connect(feedbackGain);
+    feedbackGain.connect(delayFilter);
+    delayFilter.connect(delayNode);
+
+    padFilter.connect(masterGain);
+    padFilter.connect(delayNode);
+    delayNode.connect(masterGain);
+    masterGain.connect(audioCtx.destination);
+
+    return audioCtx;
+  }
+
+  function startPad(){
+    CHORD.forEach(function(freq, i){
+      [-5, 0, 5].forEach(function(detune){
+        var osc = audioCtx.createOscillator();
+        osc.type = i === 0 ? 'sine' : 'triangle';
+        osc.frequency.value = freq;
+        osc.detune.value = detune;
+
+        var g = audioCtx.createGain();
+        g.gain.value = 0.05 / (i + 1);
+        osc.connect(g);
+        g.connect(padFilter);
+        osc.start();
+
+        var lfo = audioCtx.createOscillator();
+        lfo.frequency.value = 0.04 + Math.random() * 0.05;
+        var lfoGain = audioCtx.createGain();
+        lfoGain.gain.value = g.gain.value * 0.6;
+        lfo.connect(lfoGain);
+        lfoGain.connect(g.gain);
+        lfo.start();
+      });
+    });
+  }
+
+  function scheduleTwinkle(){
+    if(!started || !audioCtx) return;
+    var freq = BELLS[Math.floor(Math.random() * BELLS.length)];
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    var g = audioCtx.createGain();
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.1, t + 0.06);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4);
+    osc.connect(g);
+    g.connect(padFilter);
+    osc.start(t);
+    osc.stop(t + 2.5);
+
+    twinkleTimeout = setTimeout(scheduleTwinkle, 2600 + Math.random() * 3600);
+  }
+
+  function fadeTo(target, seconds){
+    if(!masterGain) return;
+    var now = audioCtx.currentTime;
+    masterGain.gain.cancelScheduledValues(now);
+    masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+    masterGain.gain.linearRampToValueAtTime(target, now + seconds);
+  }
+
+  function play(){
+    if(!ensureGraph()) return;
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    if(!started){
+      started = true;
+      startPad();
+      scheduleTwinkle();
+    }
+    fadeTo(getVolume() * 0.55, 1.1);
+  }
+
+  function pause(){
+    if(!audioCtx) return;
+    fadeTo(0, 0.7);
+  }
+
+  document.addEventListener('visibilitychange', function(){
+    if(!audioCtx) return;
+    if(document.hidden){ audioCtx.suspend(); }
+    else if(getMusicEnabled()){ audioCtx.resume(); }
+  });
+
+  var toggle = document.getElementById('toggleMusic');
+  var volumeSlider = document.getElementById('musicVolume');
+
+  function renderMusicUI(){
+    var on = getMusicEnabled();
+    toggle.classList.toggle('on', on);
+    toggle.setAttribute('aria-checked', on ? 'true' : 'false');
+    volumeSlider.disabled = !on;
+  }
+
+  toggle.addEventListener('click', function(){
+    var next = !getMusicEnabled();
+    setMusicEnabled(next);
+    renderMusicUI();
+    if(next) play(); else pause();
+  });
+
+  volumeSlider.addEventListener('input', function(){
+    var v = parseFloat(volumeSlider.value);
+    setVolume(v);
+    if(getMusicEnabled() && audioCtx) fadeTo(v * 0.55, 0.15);
+  });
+
+  volumeSlider.value = getVolume();
+  renderMusicUI();
+
+  // Si ya estaba activada en una visita anterior, los navegadores
+  // igual exigen una interacción del usuario para poder sonar.
+  if(getMusicEnabled()){
+    var resumeOnce = function(){
+      play();
+      document.removeEventListener('pointerdown', resumeOnce);
+      document.removeEventListener('keydown', resumeOnce);
+    };
+    document.addEventListener('pointerdown', resumeOnce, { once:true });
+    document.addEventListener('keydown', resumeOnce, { once:true });
+  }
+})();
+</script>
+<script>
+(function(){
+  // CÓDIGO MODIFICADO:
 var reduceMotion = false;
-  
   var canvas = document.getElementById('starfield');
   var ctx = canvas.getContext('2d');
   var W, H, DPR;
@@ -723,8 +1055,20 @@ var reduceMotion = false;
   }
 
   var lastTime = null;
+  var motionOn = window.UI_MOTION ? window.UI_MOTION.get() : true;
+  canvas.style.display = motionOn ? 'block' : 'none';
+
+  document.addEventListener('ui-motion-change', function(e){
+    motionOn = e.detail.enabled;
+    canvas.style.display = motionOn ? 'block' : 'none';
+    if(motionOn){
+      lastTime = null;
+      requestAnimationFrame(tick);
+    }
+  });
 
   function tick(now){
+    if(!motionOn) return;
     requestAnimationFrame(tick);
     if(!visible) return;
     if(lastTime === null) lastTime = now;
@@ -786,7 +1130,7 @@ var reduceMotion = false;
   }
 
   init();
-  requestAnimationFrame(tick);
+  if(motionOn) requestAnimationFrame(tick);
 })();
 </script>
 </body>
