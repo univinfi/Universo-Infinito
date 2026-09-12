@@ -575,8 +575,8 @@
 </script>
 <script>
 (function(){
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+var reduceMotion = false;
+  
   var canvas = document.getElementById('starfield');
   var ctx = canvas.getContext('2d');
   var W, H, DPR;
