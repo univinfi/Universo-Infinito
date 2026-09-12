@@ -735,7 +735,7 @@
   function getMusicEnabled(){
     var v = null;
     try{ v = localStorage.getItem(ENABLED_KEY); }catch(e){}
-    return v === '1';
+    return v === null ? true : v === '1';
   }
   function setMusicEnabled(val){
     try{ localStorage.setItem(ENABLED_KEY, val ? '1' : '0'); }catch(e){}
@@ -892,16 +892,23 @@
   volumeSlider.value = getVolume();
   renderMusicUI();
 
-  // Si ya estaba activada en una visita anterior, los navegadores
-  // igual exigen una interacción del usuario para poder sonar.
+  // La música queda activada por defecto. Los navegadores bloquean el
+  // audio hasta que la persona interactúa con la página al menos una
+  // vez (clic, toque o tecla) — no hay forma de saltarse esa regla,
+  // así que en cuanto ocurra esa primera interacción (con cualquier
+  // parte del sitio, no hace falta tocar el interruptor) la música
+  // arranca sola.
   if(getMusicEnabled()){
+    play();
     var resumeOnce = function(){
       play();
       document.removeEventListener('pointerdown', resumeOnce);
       document.removeEventListener('keydown', resumeOnce);
+      document.removeEventListener('touchstart', resumeOnce);
     };
     document.addEventListener('pointerdown', resumeOnce, { once:true });
     document.addEventListener('keydown', resumeOnce, { once:true });
+    document.addEventListener('touchstart', resumeOnce, { once:true });
   }
 })();
 </script>
