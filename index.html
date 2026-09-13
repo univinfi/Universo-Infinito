@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UniversoInfinito — Elige tu mundo</title>
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -404,6 +409,46 @@
 </style>
 </head>
 <body>
+<script>
+/* ============================================================
+   Contador de visitas — envía un "ping" silencioso a un Apps
+   Script propio (gratis, corre bajo tu cuenta de Google) que
+   cuenta la visita y, al final del día, te manda el total por
+   correo. No cuenta las visitas hechas desde ESTE dispositivo
+   una vez que lo marcas como tuyo (ver instrucciones).
+   ============================================================ */
+(function(){
+  // 👉 Reemplaza esto con la URL que te da Apps Script al desplegar
+  //    (termina en /exec). Instrucciones aparte.
+  var VISIT_COUNTER_URL = 'PEGA_AQUI_TU_URL_DE_APPS_SCRIPT';
+
+  var OWNER_KEY = 'ui_owner_device';
+
+  // Visita tu propio sitio UNA vez añadiendo ?owner=1 a la URL
+  // (ej: tusitio.com/index.html?owner=1) y este navegador queda
+  // marcado como "tuyo" para siempre — no se contará de nuevo.
+  try{
+    var params = new URLSearchParams(window.location.search);
+    if(params.get('owner') === '1'){
+      localStorage.setItem(OWNER_KEY, '1');
+    }
+  }catch(e){}
+
+  var isOwnerDevice = false;
+  try{ isOwnerDevice = localStorage.getItem(OWNER_KEY) === '1'; }catch(e){}
+
+  var configured = VISIT_COUNTER_URL.indexOf('PEGA_AQUI') === -1;
+
+  if(!isOwnerDevice && configured){
+    try{
+      var beacon = new Image();
+      beacon.referrerPolicy = 'no-referrer-when-downgrade';
+      beacon.src = VISIT_COUNTER_URL + '?t=' + Date.now();
+    }catch(e){}
+  }
+})();
+</script>
+
   <canvas id="starfield"></canvas>
 
   <div class="wrap">
@@ -448,7 +493,9 @@
       </a>
     </div>
 
-  
+    <footer>Hecho a mano, hoja por hoja, en algún rincón de la galaxia. 🪐✨</footer>
+  </div>
+
   <button class="settings-fab" id="settingsBtn" title="Ajustes" aria-label="Abrir ajustes">⚙️</button>
   <div class="settings-panel" id="settingsPanel">
     <h4>Ajustes</h4>
